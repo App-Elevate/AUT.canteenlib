@@ -3,14 +3,14 @@ name: Hlášení kompatibility
 about: Pokud chcete nahlásit výsledky vašeho testu kompatibility, použijte tuto předlohu
 title: 'Kompatibilita: '
 labels: kompatibilita
-assignees: hernikplays
+assignees: tpkowastaken
 
 ---
 
 - Název instituce vlastnící instanci / URL:
 - Verze iCanteen:
 - Verze knihovny:
-- Funkční metody: ([odškrtněte](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#task-lists), co funguje)
+- Funkční metody: odškrtněte co funguje - vložte x mezi `[` a `]`
 
 - [ ] login
 - [ ] ziskejJidelnicek
@@ -21,7 +21,7 @@ assignees: hernikplays
 - [ ] ziskatBurzu
 - [ ] ziskejUzivatele
 
-**V případě nefunkčnosti některé z metod vkládejte sem chybové hlášky a váš kód**
+**V případě nefunkčnosti některé z metod vkládejte sem chybové hlášky a váš kód nebo zašlete citlivější údaje na tom@tomprotiva.com**
 
 *Příklad:*
 - *chybová hláška pro `login`*
