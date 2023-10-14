@@ -8,11 +8,12 @@ Kantýny, které v adrese obsahují i číslo portu, dokážou být často probl
 - ✅ - plně funkční nebo pouze s malými chybami
 - ❓ - částečně funkční
 
-|     Provozovatel     | Verze iCanteen   | Funkční | Adresa                              |
-| :------------------: | ---------------- | ------- | ----------------------------------- |
-|      SŠTE Brno       | iCanteen 2.19.13 | ✅      | https://stravovani.sstebrno.cz      |
-|      SPŠ Třebíč      | iCanteen 2.10.25 | ❌      | https://icanteen.spst.cz            |
-|    SPŠEI Ostrava     | iCanteen 2.17.03 | ❌      | https://obedy.spseiostrava.cz:8443/ |
-| SPŠ a G Na Třebešíně | iCanteen 2.18.03 | ✅      | https://trebesin.cz                 |
+|     Provozovatel      | Verze iCanteen   | Funkční | Adresa                              |
+| :-------------------: | ---------------- | ------- | ----------------------------------- |
+|       SŠTE Brno       | iCanteen 2.19.13 | ✅      | https://stravovani.sstebrno.cz      |
+|      SPŠ Třebíč       | iCanteen 2.10.25 | ❌      | https://icanteen.spst.cz            |
+|     SPŠEI Ostrava     | iCanteen 2.17.03 | ❌      | https://obedy.spseiostrava.cz:8443/ |
+| SPŠ a G Na Třebešíně  | iCanteen 2.18.03 | ✅      | https://trebesin.cz                 |
+| ZŠ Ostrava, Matiční 5 | iCanteen 2.18.19 | ✅      | http://obedy.zs-mat5.cz             |
 
 Pokud chcete přispět s testem, otestujte tuto knihovnu na instanci iCanteen, kde, nejlépe legálně, máte přístup, a nahlašte své poznatky do [github issues](https://github.com/tpkowastaken/icanteenlib/issues/new?assignees=tpkowastaken&labels=kompatibilita&projects=&template=hl--en--kompatibility.md&title=Kompatibilita%3A+) (i pokud fungují prosím)

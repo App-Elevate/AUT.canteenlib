@@ -1,8 +1,8 @@
 import 'package:canteenlib/canteenlib.dart';
 
 const String url = "kantyna.neco.cz";
-const String username = "jmeno";
-const String password = "heslo";
+const String username = "uzivatel";
+const String password = "heslo123";
 
 void main(List<String> args) async {
   Canteen canteenInstance = Canteen(url);
@@ -33,7 +33,7 @@ void main(List<String> args) async {
     print('na burze: ${jidelnicek.jidla[i].naBurze}');
     print('den: ${jidelnicek.jidla[i].den}');
     for (int k = 0; k < jidelnicek.jidla[i].alergeny.length; k++) {
-      print('alergen: ${jidelnicek.jidla[i].alergeny[k].nazev}');
+      print('alergen: ${jidelnicek.jidla[i].alergeny[k].nazev} - ${jidelnicek.jidla[i].alergeny[k].popis}');
     }
     print('orderUrl: ${jidelnicek.jidla[i].orderUrl}');
     print('burzaUrl: ${jidelnicek.jidla[i].burzaUrl}');
@@ -42,6 +42,7 @@ void main(List<String> args) async {
       print('pití: ${jidelnicek.jidla[i].kategorizovano!.piti}');
       print('polévka: ${jidelnicek.jidla[i].kategorizovano!.polevka}');
       print('Salátový bar: ${jidelnicek.jidla[i].kategorizovano!.salatovyBar}');
+      print('ostatní: ${jidelnicek.jidla[i].kategorizovano!.ostatni}');
     }
     print('--------------------------------------\n\n');
   }
@@ -62,7 +63,7 @@ void main(List<String> args) async {
     print('na burze: ${jidelnicek.jidla[i].naBurze}');
     print('den: ${jidelnicek.jidla[i].den}');
     for (int k = 0; k < jidelnicek.jidla[i].alergeny.length; k++) {
-      print('alergen: ${jidelnicek.jidla[i].alergeny[k].nazev}');
+      print('alergen: ${jidelnicek.jidla[i].alergeny[k].nazev} - ${jidelnicek.jidla[i].alergeny[k].popis}');
     }
     print('orderUrl: ${jidelnicek.jidla[i].orderUrl}');
     print('burzaUrl: ${jidelnicek.jidla[i].burzaUrl}');
@@ -71,11 +72,12 @@ void main(List<String> args) async {
       print('pití: ${jidelnicek.jidla[i].kategorizovano!.piti}');
       print('polévka: ${jidelnicek.jidla[i].kategorizovano!.polevka}');
       print('Salátový bar: ${jidelnicek.jidla[i].kategorizovano!.salatovyBar}');
+      print('ostatní: ${jidelnicek.jidla[i].kategorizovano!.ostatni}');
     }
     print('--------------------------------------\n\n');
   }
   try {
-    jidelnicek.jidla[0] = await canteenInstance.doBurzy(jidelnicek.jidla[0]);
+    //jidelnicek.jidla[0] = await canteenInstance.doBurzy(jidelnicek.jidla[0]);
   } catch (e) {
     print(e);
   }
@@ -89,7 +91,7 @@ void main(List<String> args) async {
     print('na burze: ${jidelnicek.jidla[i].naBurze}');
     print('den: ${jidelnicek.jidla[i].den}');
     for (int k = 0; k < jidelnicek.jidla[i].alergeny.length; k++) {
-      print('alergen: ${jidelnicek.jidla[i].alergeny[k].nazev}');
+      print('alergen: ${jidelnicek.jidla[i].alergeny[k].nazev} - ${jidelnicek.jidla[i].alergeny[k].popis}');
     }
     print('orderUrl: ${jidelnicek.jidla[i].orderUrl}');
     print('burzaUrl: ${jidelnicek.jidla[i].burzaUrl}');
@@ -98,6 +100,7 @@ void main(List<String> args) async {
       print('pití: ${jidelnicek.jidla[i].kategorizovano!.piti}');
       print('polévka: ${jidelnicek.jidla[i].kategorizovano!.polevka}');
       print('Salátový bar: ${jidelnicek.jidla[i].kategorizovano!.salatovyBar}');
+      print('ostatní: ${jidelnicek.jidla[i].kategorizovano!.ostatni}');
     }
     print('--------------------------------------\n\n');
   }

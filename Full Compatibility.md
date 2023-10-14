@@ -29,6 +29,9 @@
     - lze objednat
     - na burze
     - alergeny
+      - kódy
+      - podrobnosti
+      - název
     - rozdělení na kategorie
     - blokováno (vypršela platnost)
 - Objednávání
@@ -62,6 +65,9 @@
     - lze objednat ✅
     - na burze ✅
     - alergeny ✅
+      - kódy ❌ - není dostupné na této verzi icanteen
+      - podrobnosti ✅
+      - název ✅
     - rozdělení na kategorie ✅
 - Objednávání
   - funguje objednávání ✅
@@ -81,21 +87,24 @@
   - jméno ✅
   - Příjmení ✅
   - Kategorie ✅
-  - Účet pro platby ❌
+  - Účet pro platby ✅
   - Variabilní symbol ✅
   - specifický symbol ❓
-  - Uživatelské jméno ❌
+  - Uživatelské jméno ✅
 - Jídelníček pro den ✅
   - správný počet jídel ❓ - v autojídelně vyřešeno wrapperem.
   - jídlo ✅
-    - název ❓- má dvě mezery
+    - název ✅ má dvě mezery
     - cena ✅
     - varianta ✅
     - objednáno ✅
     - lze objednat ✅
     - na burze ✅
-    - alergeny ❓ - zobrazí jenom první
-    - rozdělení na kategorie ❌
+    - alergeny ✅
+      - kódy ✅
+      - podrobnosti ✅
+      - název ✅
+    - rozdělení na kategorie ✅
 - Objednávání
   - funguje objednávání ✅
   - funguje zrušení ✅

@@ -1,7 +1,7 @@
 /*
  MIT License
 
-Copyright (c) 2022-2023 Matyáš Caras, tpkowastaken and contributors
+Copyright (c) 2022-2023 Matyáš Caras, Tomáš Protiva and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -52,14 +52,18 @@ class Canteen_2_18_19 extends Canteen {
     }
     var kreditMatch = double.tryParse(
         RegExp(r' +<span id="Kredit" .+?>(.+?)(?=&)').firstMatch(r)!.group(1)!.replaceAll(",", ".").replaceAll(RegExp(r"[^\w.-]"), ""));
+    var uzivatelskeJmenoMatch = RegExp(r'title="Přihlašovací jméno:\s*(.*?)">').firstMatch(r);
     var jmenoMatch = RegExp(r'(?<=jméno: <b>).+?(?=<\/b)').firstMatch(r);
     var prijmeniMatch = RegExp(r'(?<=příjmení: <b>).+?(?=<\/b)').firstMatch(r);
     var kategorieMatch = RegExp(r'(?<=kategorie: <b>).+?(?=<\/b)').firstMatch(r);
-    var ucetMatch =
-        RegExp(r'účet pro platby do jídelny:\s*<b>(\d+/\d+)</b>').firstMatch(r)?.group(1)?.replaceAll(RegExp(r'<\/?b>'), ''); //odstranit html tag <b>
+    var ucetMatch = RegExp(r'účet pro platby do jídelny:\s*<b>(\d*-*\d+\/?\d*)<\/b>')
+        .firstMatch(r)
+        ?.group(1)
+        ?.replaceAll(RegExp(r'<\/?b>'), ''); //odstranit html tag <b>
     var varMatch = RegExp(r'(?<=variabilní symbol: <b>).+?(?=<\/b)').firstMatch(r);
     var specMatch = RegExp(r'(?<=specifický symbol: <b>).+?(?=<\/b)').firstMatch(r);
 
+    var uzivatelskeJmeno = uzivatelskeJmenoMatch?.group(1)?.substring(0, uzivatelskeJmenoMatch.group(1)?.indexOf('"')) ?? "";
     var jmeno = jmenoMatch?.group(0) ?? "";
     var prijmeni = prijmeniMatch?.group(0) ?? "";
     var kategorie = kategorieMatch?.group(0) ?? "";
@@ -69,7 +73,14 @@ class Canteen_2_18_19 extends Canteen {
     var kredit = kreditMatch ?? 0.0;
 
     return Uzivatel(
-        jmeno: jmeno, prijmeni: prijmeni, kategorie: kategorie, ucetProPlatby: ucet, varSymbol: varSymbol, specSymbol: specSymbol, kredit: kredit);
+        jmeno: jmeno,
+        prijmeni: prijmeni,
+        kategorie: kategorie,
+        ucetProPlatby: ucet,
+        varSymbol: varSymbol,
+        specSymbol: specSymbol,
+        kredit: kredit,
+        uzivatelskeJmeno: uzivatelskeJmeno);
   }
 
   Future<void> _getFirstSession() async {
@@ -250,13 +261,12 @@ class Canteen_2_18_19 extends Canteen {
           .replaceAll(' ,', ",")
           .replaceAll(" <br>", "")
           .replaceAll("\n", "");
-      var alergenyList = RegExp(r"""<span(?: |\n).+?title="(.+?)".+?>(\d{1,2})""").allMatches(jidlaProDen).toList();
-
+      var alergenyList = RegExp(r'(<span\s*title=.*?<\/span>)').allMatches(jidlaProDen).toList();
       var alergeny = alergenyList.map<Alergen>((e) {
         var jmeno = RegExp(r'<b>(.+?)<\/b>').firstMatch(e.group(1).toString())!.group(1);
         var popis = RegExp(r'<\/b> - (.+)').firstMatch(e.group(1).toString())?.group(1);
-        var kod = int.parse(e.group(2).toString());
-        return Alergen(nazev: jmeno!, kod: kod, popis: popis);
+        var kod = RegExp(r'class="textGrey">(\d+?),?\s?').firstMatch(e.group(1).toString())?.group(1);
+        return Alergen(nazev: jmeno!, kod: kod == null ? null : int.parse(kod), popis: popis);
       }).toList();
 
       var vydejna = RegExp(r'(?<=<span class="smallBoldTitle button-link-align">).+?(?=<)').firstMatch(o)!.group(0).toString();
@@ -277,18 +287,21 @@ class Canteen_2_18_19 extends Canteen {
         }
       }
       var jidloJmeno = RegExp(r'(.+?)(?=<sub>)').firstMatch(jidlaProDen)!.group(1).toString();
+      jidloJmeno = cleanString(jidloJmeno);
       jidla.add(
         Jidlo(
-            nazev: jidloJmeno.replaceAll(r' (?=[^a-zA-ZěščřžýáíéĚŠČŘŽÝÁÍÉŤŇťň])', ''),
-            objednano: objednano,
-            varianta: vydejna,
-            lzeObjednat: lzeObjednat,
-            cena: cena,
-            orderUrl: orderUrl,
-            den: obedDen,
-            burzaUrl: burzaUrl,
-            naBurze: (burzaUrl == null) ? false : burzaUrl.contains("minusburza"),
-            alergeny: alergeny),
+          nazev: jidloJmeno.replaceAll(r' (?=[^a-zA-ZěščřžýáíéĚŠČŘŽÝÁÍÉŤŇťň])', ''),
+          objednano: objednano,
+          varianta: vydejna,
+          lzeObjednat: lzeObjednat,
+          cena: cena,
+          orderUrl: orderUrl,
+          den: obedDen,
+          burzaUrl: burzaUrl,
+          naBurze: (burzaUrl == null) ? false : burzaUrl.contains("minusburza"),
+          alergeny: alergeny,
+          kategorizovano: parseJidlo(jidloJmeno),
+        ),
       );
       // KONEC formátování do třídy
     }

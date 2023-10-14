@@ -1,7 +1,7 @@
 /*
  MIT License
 
-Copyright (c) 2022-2023 Matyáš Caras, tpkowastaken and contributors
+Copyright (c) 2022-2023 Matyáš Caras, Tomáš Protiva and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -41,6 +41,83 @@ class Canteen {
 
   // Je uživatel přihlášen?
   bool get prihlasen => canteenInstance?.prihlasen ?? false;
+
+  ///zpracuje jídlo a rozdělí ho na kategorie (hlavní jídlo, polévka, salátový bar, pití...)
+  JidloKategorizovano parseJidlo(String jidlo) {
+    List<String> cistyListJidel = jidlo.split(',');
+    for (int i = 0; i < cistyListJidel.length; i++) {
+      cistyListJidel[i] = cistyListJidel[i].trimLeft();
+    }
+    String polevka = '';
+    String hlavniJidlo = '';
+    String salatovyBar = '';
+    String piti = '';
+    String ostatni = '';
+    for (int i = 0; i < cistyListJidel.length; i++) {
+      if (cistyListJidel[i].contains('Polévka') || cistyListJidel[i].contains('fridátové nudle')) {
+        if (polevka != '') {
+          polevka += ', ';
+        }
+        polevka = '$polevka${cistyListJidel[i]}';
+      } else if (cistyListJidel[i].contains('salátový bar')) {
+        if (salatovyBar != '') {
+          salatovyBar += ', ';
+        }
+        salatovyBar = '$salatovyBar${cistyListJidel[i]}';
+      } else if (cistyListJidel[i].contains('nápoj') || cistyListJidel[i].contains('čaj') || cistyListJidel[i].contains('káva')) {
+        if (piti != '') {
+          piti += ', ';
+        }
+        piti = '$piti${cistyListJidel[i]}';
+      } else if (cistyListJidel[i].contains('ovoce')) {
+        if (ostatni != '') {
+          ostatni += ', ';
+        }
+        ostatni = '$ostatni${cistyListJidel[i]}';
+      } else {
+        if (hlavniJidlo != '') {
+          hlavniJidlo += ', ';
+        }
+        hlavniJidlo = '$hlavniJidlo${cistyListJidel[i]}';
+      }
+    }
+    hlavniJidlo = hlavniJidlo.trimLeft();
+    polevka = polevka.trimLeft();
+    piti = piti.trimLeft();
+    salatovyBar = salatovyBar.trimLeft();
+    ostatni = ostatni.trimLeft();
+    if (polevka != '') {
+      //make first letter of polevka capital
+      polevka = polevka.substring(0, 1).toUpperCase() + polevka.substring(1);
+    }
+    if (ostatni != '') {
+      //make first letter of ostatni capital
+      ostatni = ostatni.substring(0, 1).toUpperCase() + ostatni.substring(1);
+    }
+    if (hlavniJidlo != '') {
+      //make first letter of hlavniJidlo capital
+      hlavniJidlo = hlavniJidlo.substring(0, 1).toUpperCase() + hlavniJidlo.substring(1);
+      if (hlavniJidlo.length > 3 && hlavniJidlo.substring(0, 3) == 'N. ') {
+        hlavniJidlo = hlavniJidlo.substring(3);
+      }
+    }
+    if (piti != '') {
+      //make first letter of piti capital
+      piti = piti.substring(0, 1).toUpperCase() + piti.substring(1);
+    }
+    if (salatovyBar != '') {
+      //make first letter of salatovyBar capital
+      salatovyBar = salatovyBar.substring(0, 1).toUpperCase() + salatovyBar.substring(1);
+    }
+    //first regex match for '(' and last for ')' gets replaced with ''
+    return JidloKategorizovano(
+      polevka: polevka,
+      hlavniJidlo: hlavniJidlo,
+      salatovyBar: salatovyBar,
+      piti: piti,
+      ostatni: ostatni,
+    );
+  }
 
   String cleanString(String string) {
     return string

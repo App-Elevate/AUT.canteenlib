@@ -1,14 +1,10 @@
 class JidloKategorizovano {
-  JidloKategorizovano({
-    this.polevka,
-    this.hlavniJidlo,
-    this.salatovyBar,
-    this.piti,
-  });
+  JidloKategorizovano({this.polevka, this.hlavniJidlo, this.salatovyBar, this.piti, this.ostatni});
   String? polevka;
   String? hlavniJidlo;
   String? salatovyBar;
   String? piti;
+  String? ostatni;
 }
 
 /// Reprezentuje jedno jídlo z jídelníčku
