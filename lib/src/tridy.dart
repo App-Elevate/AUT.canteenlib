@@ -1,7 +1,23 @@
+class JidloKategorizovano {
+  JidloKategorizovano({
+    this.polevka,
+    this.hlavniJidlo,
+    this.salatovyBar,
+    this.piti,
+  });
+  String? polevka;
+  String? hlavniJidlo;
+  String? salatovyBar;
+  String? piti;
+}
+
 /// Reprezentuje jedno jídlo z jídelníčku
 class Jidlo {
   /// Název jídla
   String nazev;
+
+  /// Kategorizované jídlo
+  JidloKategorizovano? kategorizovano;
 
   /// Objednal si uživatel toto jídlo?
   bool objednano;
@@ -33,6 +49,7 @@ class Jidlo {
   final String? burzaUrl;
   Jidlo(
       {required this.nazev,
+      this.kategorizovano,
       required this.objednano,
       required this.varianta,
       required this.den,
@@ -46,11 +63,11 @@ class Jidlo {
 
 /// Popisuje alergen v jídelníčku
 class Alergen {
-  final int kod;
+  final int? kod;
   final String nazev;
   final String? popis;
 
-  const Alergen({required this.nazev, required this.kod, this.popis});
+  const Alergen({required this.nazev, this.kod, this.popis});
 }
 
 /// Reprezentuje cizí jídlo na burze
@@ -70,12 +87,7 @@ class Burza {
   /// Počet kusů tohoto jídla dostupného na burze
   int pocet;
 
-  Burza(
-      {required this.den,
-      required this.url,
-      required this.nazev,
-      required this.pocet,
-      this.varianta});
+  Burza({required this.den, required this.url, required this.nazev, required this.pocet, this.varianta});
 }
 
 /// Reprezentuje jídelníček pro jeden den
@@ -115,12 +127,11 @@ class Uzivatel {
   double kredit;
 
   Uzivatel(
-      {this.uzivatelskeJmeno,
-      this.jmeno,
-      this.prijmeni,
-      this.kategorie,
-      this.ucetProPlatby,
-      this.varSymbol,
-      this.kredit = 0.0,
-      this.specSymbol});
+      {this.uzivatelskeJmeno, this.jmeno, this.prijmeni, this.kategorie, this.ucetProPlatby, this.varSymbol, this.kredit = 0.0, this.specSymbol});
+}
+
+class LoginData {
+  final String username;
+  final String password;
+  LoginData(this.username, this.password);
 }
