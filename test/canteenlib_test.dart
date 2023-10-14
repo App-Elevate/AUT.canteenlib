@@ -5,7 +5,7 @@ import 'package:dotenv/dotenv.dart';
 void main() {
   group('A group of tests', () {
     var env = DotEnv(includePlatformEnvironment: true)..load();
-    Canteen c = Canteen(env["ADDRESS"]!);
+    Canteen c = Canteen(env["URL"]!);
 
     test('Log-in test', () {
       c.login(env["USER"]!, env["PASS"]!).then((r) => expect(r, true));
