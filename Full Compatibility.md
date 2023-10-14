@@ -72,3 +72,36 @@
   - vložení jídla na burzu ✅
   - zrušit vložení jídla na burzu ✅
   - počet ➖
+
+# Základní škola Ostrava, Matiční 5
+
+- Login ✅
+- Získej uživatele ✅
+  - kredit ✅
+  - jméno ✅
+  - Příjmení ✅
+  - Kategorie ✅
+  - Účet pro platby
+  - Variabilní symbol ✅
+  - specifický symbol ❓
+  - Uživatelské jméno ❌
+- Jídelníček pro den ✅
+  - správný počet jídel ❓ - v autojídelně vyřešeno wrapperem.
+  - jídlo ✅
+    - název ❓- má dvě mezery
+    - cena ✅
+    - varianta ✅
+    - objednáno ✅
+    - lze objednat ✅
+    - na burze ✅
+    - alergeny ❓ - zobrazí jenom první
+    - rozdělení na kategorie ❌
+- Objednávání
+  - funguje objednávání ✅
+  - funguje zrušení ✅
+- Burza
+  - získání burzy
+  - Objednávání z burzy
+  - vložení jídla na burzu ✅
+  - zrušit vložení jídla na burzu ✅
+  - počet ➖

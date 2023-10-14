@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 // ignore_for_file: camel_case_types
+/*
+  testováno na webu http://obedy.zs-mat5.cz/
+*/
 
 import 'package:canteenlib/canteenlib.dart';
 import 'package:http/http.dart' as http;
