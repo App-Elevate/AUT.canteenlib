@@ -34,7 +34,7 @@ jobs:
       # Testing pro jidelna.trebesin.cz
       - name: Credentials pro jidelna.trebesin.cz
         run: |
-          echo "URL= '${{ secrets.URL1 }}'" > .env
+          echo "URL= 'jidelna.trebesin.cz'" > .env
           echo "USER= '${{ secrets.USER1 }}'" >> .env
           echo "PASS= '${{ secrets.PASS1 }}'" >> .env
 
@@ -44,7 +44,7 @@ jobs:
       # Testing pro obedy.zs-mat5.cz
       - name: Credentials pro obedy.zs-mat5.cz
         run: |
-          echo "URL= '${{ secrets.URL2 }}'" > .env
+          echo "URL= 'obedy.zs-mat5.cz'" > .env
           echo "USER= '${{ secrets.USER2 }}'" >> .env
           echo "PASS= '${{ secrets.PASS2 }}'" >> .env
 
