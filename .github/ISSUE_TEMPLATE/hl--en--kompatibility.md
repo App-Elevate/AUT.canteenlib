@@ -1,16 +1,15 @@
 ---
 name: Hlášení kompatibility
 about: Pokud chcete nahlásit výsledky vašeho testu kompatibility, použijte tuto předlohu
-title: 'Kompatibilita: '
+title: "Kompatibilita: "
 labels: kompatibilita
 assignees: tpkowastaken
-
 ---
 
 - Název instituce vlastnící instanci / URL:
 - Verze iCanteen:
 - Verze knihovny:
-- Funkční metody: odškrtněte co funguje - vložte x mezi `[` a `]`
+- Funkční metody: odškrtněte co funguje - vložte `x` mezi `[` a `]`
 
 - [ ] login
 - [ ] ziskejJidelnicek
@@ -23,7 +22,8 @@ assignees: tpkowastaken
 
 **V případě nefunkčnosti některé z metod vkládejte sem chybové hlášky a váš kód nebo zašlete citlivější údaje na tom@tomprotiva.com**
 
-*Příklad:*
-- *chybová hláška pro `login`*
-- *chybová hláška pro `jidelnicekDen`*
-- *chybová hláška pro `objednat`*
+_Příklad:_
+
+- _chybová hláška pro `login`_
+- _chybová hláška pro `jidelnicekDen`_
+- _chybová hláška pro `objednat`_
