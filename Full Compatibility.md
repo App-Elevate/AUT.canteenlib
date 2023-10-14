@@ -81,7 +81,7 @@
   - jméno ✅
   - Příjmení ✅
   - Kategorie ✅
-  - Účet pro platby
+  - Účet pro platby ❌
   - Variabilní symbol ✅
   - specifický symbol ❓
   - Uživatelské jméno ❌
