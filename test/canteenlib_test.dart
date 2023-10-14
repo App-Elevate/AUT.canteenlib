@@ -2,6 +2,7 @@ import 'package:canteenlib/canteenlib.dart';
 import 'package:test/test.dart';
 import 'package:dotenv/dotenv.dart';
 
+//TODO: vylepšit testy
 void main() {
   group('A group of tests', () {
     var env = DotEnv(includePlatformEnvironment: true)..load();
