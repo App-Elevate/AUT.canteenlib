@@ -3,3 +3,11 @@ test
 *.test.dart
 node_modules
 package*.json
+.dart_tool/
+.packages
+build/
+pubspec.lock
+.env*
+*.test.dart
+.vscode/launch.json
+.vscode/settings.json
