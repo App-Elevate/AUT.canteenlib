@@ -285,7 +285,7 @@ class Canteen2v18v19 extends Canteen {
           burzaUrl = match.group(0)!.replaceAll("amp;", "");
         }
       }
-      var jidloJmeno = RegExp(r'(.+?)(?=<sub>)').firstMatch(jidlaProDen)!.group(1).toString();
+      var jidloJmeno = jidlaProDen.split('<sub>')[0];
       jidloJmeno = cleanString(jidloJmeno);
       jidla.add(
         Jidlo(
