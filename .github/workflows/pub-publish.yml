@@ -1,20 +1,17 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Dart check
+# .github/workflows/publish.yml
+name: Publish to pub.dev
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*" # tag pattern on pub.dev: 'v'
 
+# Publish using custom workflow
 jobs:
-  build:
+  publish:
+    permissions:
+      id-token: write # Required for authentication using OIDC
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
@@ -49,3 +46,6 @@ jobs:
 
       - name: Test pro obedy.zs-mat5.cz
         run: dart test
+
+      - name: Publish
+        run: dart pub publish --force
