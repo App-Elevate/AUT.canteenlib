@@ -3,8 +3,9 @@
 - Kompletně překopán celý systém s podporou více verzí zároveň a to bez breaking changes
 - přidán variable kategorizovano do třídy `Jidlo`, kde je jídlo rozzřazeno na hlavní jídlo, polévku...
 - přidána třída JidloKategorizovano ve které se ukládá roztřízené jídlo
-- plný support pro `jidelna.trebesin.cz` a `http://obedy.zs-mat5.cz`
+- plný support pro `https://jidelna.trebesin.cz` a `http://obedy.zs-mat5.cz`
 - přidán lepší example
+- aktualizovány dependencies
 
 ## 2.0.0
 
