@@ -13,7 +13,8 @@ void main(List<String> args) async {
     await canteenInstance.login(username, heslo); // přihlásit se
 
     // získání jídelníčku pro daný den i s cenami
-    var jidelnicek = await canteenInstance.jidelnicekDen(den: DateTime.parse("2022-04-04"));
+    var jidelnicek =
+        await canteenInstance.jidelnicekDen(den: DateTime.parse("2022-04-04"));
 
     // získání informací o uživateli, jako je například kredit
     print((await canteenInstance.ziskejUzivatele()).kredit);

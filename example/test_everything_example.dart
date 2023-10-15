@@ -9,7 +9,9 @@ void main(List<String> args) async {
   Canteen canteenInstance = Canteen(url);
 
   /// Přihlášení (je nutné pro fungování všech funkcí krom tedy zíkání jídelníčku bez cen)
-  print(await canteenInstance.login(username, password) ? "login succesful" : "login failed"); // přihlásit se
+  print(await canteenInstance.login(username, password)
+      ? "login succesful"
+      : "login failed"); // přihlásit se
 
   /// Získání informací o uživateli
   Uzivatel uzivatel = await canteenInstance.ziskejUzivatele();
@@ -55,7 +57,8 @@ void vytisknoutInfoOJidelnicku(Jidelnicek jidelnicek) {
     print('na burze: ${jidelnicek.jidla[i].naBurze}');
     print('den: ${jidelnicek.jidla[i].den}');
     for (int k = 0; k < jidelnicek.jidla[i].alergeny.length; k++) {
-      print('alergen: ${jidelnicek.jidla[i].alergeny[k].nazev} - ${jidelnicek.jidla[i].alergeny[k].popis}');
+      print(
+          'alergen: ${jidelnicek.jidla[i].alergeny[k].nazev} - ${jidelnicek.jidla[i].alergeny[k].popis}');
     }
     print('orderUrl: ${jidelnicek.jidla[i].orderUrl}');
     print('burzaUrl: ${jidelnicek.jidla[i].burzaUrl}');
@@ -78,6 +81,8 @@ void vytisknoutInfoOUzivateli(Uzivatel uzivatel) {
   print('Kategorie: ${uzivatel.kategorie}'); // získat kategorii
   print('Účet pro platby: ${uzivatel.ucetProPlatby}'); // získat účet pro platby
   print('Variabilní symbol: ${uzivatel.varSymbol}'); // získat variabilní symbol
-  print('Specifický symbol: ${uzivatel.specSymbol}'); // získat specifický symbol
-  print('Uživatelské jméno: ${uzivatel.uzivatelskeJmeno}'); // získat uživatelské jméno
+  print(
+      'Specifický symbol: ${uzivatel.specSymbol}'); // získat specifický symbol
+  print(
+      'Uživatelské jméno: ${uzivatel.uzivatelskeJmeno}'); // získat uživatelské jméno
 }
