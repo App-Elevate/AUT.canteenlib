@@ -31,8 +31,6 @@ Tato verze je testována a podporována na webu jidelna.trebesin.cz.
 není garantováno, že bude fungovat na jiných stránkách.
 
 */
-import 'dart:io';
-
 /// Reprezentuje kantýnu
 ///
 /// **Všechny metody v případě chyby vrací [Future] s chybovou hláškou.**
@@ -285,7 +283,6 @@ class Canteen_2_18_03 extends Canteen {
       }
       var alergenyDetailMatch = RegExp(r'<span  title="(.*?)\s*class="').allMatches(jidlaProDen).toList();
 
-      File('test.txt').writeAsStringSync(jidlaProDen);
       jidlaProDen = parseHtmlString(jidlaProDen);
       jidlaProDen = cleanString(jidlaProDen);
       String nazevjidla = jidlaProDen;
