@@ -48,30 +48,43 @@ class Canteen {
     for (int i = 0; i < cistyListJidel.length; i++) {
       cistyListJidel[i] = cistyListJidel[i].trimLeft();
     }
+    //konstantní řetězce pro kategorizaci
+    List<String> polevky = ['Polévka', 'fridátové nudle'];
+    List<String> salatoveBary = ['salát', 'kompot'];
+    List<String> piticka = ['nápoj', 'čaj', 'káva'];
+    List<String> ostatniVeci = ['ovoce', 'pečivo', 'šáteč' /*šáteček/šátečky */];
+
+    bool kategorie(String vec, List<String> kategorie) {
+      for (int i = 0; i < kategorie.length; i++) {
+        if (vec.contains(kategorie[i])) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     String polevka = '';
     String hlavniJidlo = '';
     String salatovyBar = '';
     String piti = '';
     String ostatni = '';
     for (int i = 0; i < cistyListJidel.length; i++) {
-      if (cistyListJidel[i].contains('Polévka') || cistyListJidel[i].contains('fridátové nudle')) {
+      if (kategorie(cistyListJidel[i], polevky)) {
         if (polevka != '') {
           polevka += ', ';
         }
         polevka = '$polevka${cistyListJidel[i]}';
-      } else if (cistyListJidel[i].contains('salát') || cistyListJidel[i].contains('kompot')) {
+      } else if (kategorie(cistyListJidel[i], salatoveBary)) {
         if (salatovyBar != '') {
           salatovyBar += ', ';
         }
         salatovyBar = '$salatovyBar${cistyListJidel[i]}';
-      } else if (cistyListJidel[i].contains('nápoj') || cistyListJidel[i].contains('čaj') || cistyListJidel[i].contains('káva')) {
+      } else if (kategorie(cistyListJidel[i], piticka)) {
         if (piti != '') {
           piti += ', ';
         }
         piti = '$piti${cistyListJidel[i]}';
-      } else if (cistyListJidel[i].contains('ovoce') ||
-          cistyListJidel[i].contains('pečivo') ||
-          cistyListJidel[i].contains('šáteč') /*šáteček/šátečky */) {
+      } else if (kategorie(cistyListJidel[i], ostatniVeci)) {
         if (ostatni != '') {
           ostatni += ', ';
         }
