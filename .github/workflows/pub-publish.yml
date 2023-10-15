@@ -47,5 +47,8 @@ jobs:
       - name: Test pro obedy.zs-mat5.cz
         run: dart test
 
+      - name: Removing credentials
+        run: rm -rf .env
+
       - name: Publish
         run: dart pub publish --force
