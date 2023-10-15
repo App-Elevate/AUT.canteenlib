@@ -52,7 +52,7 @@ class Canteen {
     List<String> polevky = ['Polévka', 'fridátové nudle'];
     List<String> salatoveBary = ['salát', 'kompot'];
     List<String> piticka = ['nápoj', 'čaj', 'káva'];
-    List<String> ostatniVeci = ['ovoce', 'pečivo', 'šáteč' /*šáteček/šátečky */];
+    List<String> ostatniVeci = ['ovoce', 'pečivo', 'chléb', 'tyčinka', 'šáteč' /*šáteček/šátečky */];
 
     bool kategorie(String vec, List<String> kategorie) {
       for (int i = 0; i < kategorie.length; i++) {
@@ -84,7 +84,7 @@ class Canteen {
           piti += ', ';
         }
         piti = '$piti${cistyListJidel[i]}';
-      } else if (kategorie(cistyListJidel[i], ostatniVeci)) {
+      } else if (kategorie(cistyListJidel[i], ostatniVeci) && !cistyListJidel[i].contains('ovocem')) {
         if (ostatni != '') {
           ostatni += ', ';
         }
