@@ -90,8 +90,7 @@ class Canteen {
           piti += ', ';
         }
         piti = '$piti${cistyListJidel[i]}';
-      } else if (kategorie(cistyListJidel[i], ostatniVeci) &&
-          !cistyListJidel[i].contains('ovocem')) {
+      } else if (kategorie(cistyListJidel[i], ostatniVeci) && !cistyListJidel[i].contains('ovocem')) {
         if (ostatni != '') {
           ostatni += ', ';
         }
@@ -108,6 +107,17 @@ class Canteen {
     piti = piti.trimLeft();
     salatovyBar = salatovyBar.trimLeft();
     ostatni = ostatni.trimLeft();
+    //jídelny mají prý rádi saláty jako hlavní jídlo. Tohle je pro to fix:
+    if (hlavniJidlo == '') {
+      for (String jidlo in salatovyBar.split(', ')) {
+        if (jidlo.contains('salát')) {
+          hlavniJidlo = jidlo;
+          salatovyBar = salatovyBar.replaceAll('$jidlo, ', '');
+          salatovyBar = salatovyBar.replaceAll(jidlo, '');
+          break;
+        }
+      }
+    }
     if (polevka != '') {
       //make first letter of polevka capital
       polevka = polevka.substring(0, 1).toUpperCase() + polevka.substring(1);
@@ -118,8 +128,7 @@ class Canteen {
     }
     if (hlavniJidlo != '') {
       //make first letter of hlavniJidlo capital
-      hlavniJidlo =
-          hlavniJidlo.substring(0, 1).toUpperCase() + hlavniJidlo.substring(1);
+      hlavniJidlo = hlavniJidlo.substring(0, 1).toUpperCase() + hlavniJidlo.substring(1);
       if (hlavniJidlo.length > 3 && hlavniJidlo.substring(0, 3) == 'N. ') {
         hlavniJidlo = hlavniJidlo.substring(3);
       }
@@ -130,10 +139,8 @@ class Canteen {
     }
     if (salatovyBar != '') {
       //make first letter of salatovyBar capital
-      salatovyBar =
-          salatovyBar.substring(0, 1).toUpperCase() + salatovyBar.substring(1);
+      salatovyBar = salatovyBar.substring(0, 1).toUpperCase() + salatovyBar.substring(1);
     }
-    //first regex match for '(' and last for ')' gets replaced with ''
     return JidloKategorizovano(
       polevka: polevka,
       hlavniJidlo: hlavniJidlo,
@@ -157,8 +164,7 @@ class Canteen {
   String parseHtmlString(String htmlString) {
     try {
       final document = parse(htmlString);
-      final String parsedString =
-          parse(document.body!.text).documentElement!.text;
+      final String parsedString = parse(document.body!.text).documentElement!.text;
       return parsedString;
     } catch (e) {
       return htmlString;
@@ -196,16 +202,14 @@ class Canteen {
         } catch (e) {
           try {
             canteenInstance = Canteen2v18v19(url);
-            await canteenInstance!
-                .login(loginData.username, loginData.password);
+            await canteenInstance!.login(loginData.username, loginData.password);
             if (!canteenInstance!.prihlasen) {
               throw 'Nepodařilo se přihlásit do iCanteenu';
             }
           } catch (e) {
             try {
               canteenInstance = Canteen2v19v13(url);
-              await canteenInstance!
-                  .login(loginData.username, loginData.password);
+              await canteenInstance!.login(loginData.username, loginData.password);
               if (!canteenInstance!.prihlasen) {
                 throw 'Nepodařilo se přihlásit do iCanteenu';
               }
