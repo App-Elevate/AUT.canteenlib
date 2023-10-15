@@ -1,3 +1,8 @@
+## 3.0.3
+
+- přidán dezert do kategorie ostatní
+- opravena chyba u 2.18.03, kdy to občas crashlo po nenalezení data jídla.
+
 ## 3.0.2
 
 - Opraven oversight kdy saláty se nemohly počítat jako hlavní jídlo
