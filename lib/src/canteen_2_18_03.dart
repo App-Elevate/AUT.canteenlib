@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-// ignore_for_file: camel_case_types
 import 'package:canteenlib/canteenlib.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,10 +30,10 @@ Tato verze je testována a podporována na webu jidelna.trebesin.cz.
 není garantováno, že bude fungovat na jiných stránkách.
 
 */
-/// Reprezentuje kantýnu
+/// Reprezentuje kantýnu verze **2.18.03**
 ///
 /// **Všechny metody v případě chyby vrací [Future] s chybovou hláškou.**
-class Canteen_2_18_03 extends Canteen {
+class Canteen2v18v03 extends Canteen {
   /// icanteen je v této verzi buglý, takže je potřeba si uživatelské jméno pamatovat
   String username = "";
 
@@ -44,7 +43,7 @@ class Canteen_2_18_03 extends Canteen {
   /// Je uživatel přihlášen?
   @override
   bool prihlasen = false;
-  Canteen_2_18_03(String url) : super(url);
+  Canteen2v18v03(String url) : super(url);
 
   /// Vrátí informace o uživateli ve formě instance [Uzivatel]
   @override

@@ -147,37 +147,37 @@ class Canteen {
     }
     switch (verze) {
       case '2.18.03':
-        canteenInstance = Canteen_2_18_03(url);
+        canteenInstance = Canteen2v18v03(url);
         break;
       case '2.18.19':
-        canteenInstance = Canteen_2_18_19(url);
+        canteenInstance = Canteen2v18v19(url);
         break;
       case '2.19.13':
-        canteenInstance = Canteen_2_19_13(url);
+        canteenInstance = Canteen2v19v13(url);
         break;
       default:
         if (loginData == null) {
           //pokud není loginData, tak se nemůže získat verze. Tudíž prostě zkusíme jednu verzi a je možné, že nebude fungovat...
-          canteenInstance = Canteen_2_18_19(url);
+          canteenInstance = Canteen2v18v19(url);
           break;
         }
         //vyzkoušet všechny verze, dokud se nepodaří přihlášení
         try {
-          canteenInstance = Canteen_2_18_03(url);
+          canteenInstance = Canteen2v18v03(url);
           await canteenInstance!.login(loginData.username, loginData.password);
           if (!canteenInstance!.prihlasen) {
             throw 'Nepodařilo se přihlásit do iCanteenu';
           }
         } catch (e) {
           try {
-            canteenInstance = Canteen_2_18_19(url);
+            canteenInstance = Canteen2v18v19(url);
             await canteenInstance!.login(loginData.username, loginData.password);
             if (!canteenInstance!.prihlasen) {
               throw 'Nepodařilo se přihlásit do iCanteenu';
             }
           } catch (e) {
             try {
-              canteenInstance = Canteen_2_19_13(url);
+              canteenInstance = Canteen2v19v13(url);
               await canteenInstance!.login(loginData.username, loginData.password);
               if (!canteenInstance!.prihlasen) {
                 throw 'Nepodařilo se přihlásit do iCanteenu';

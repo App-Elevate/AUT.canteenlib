@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-// ignore_for_file: camel_case_types
 /*
   testováno na webu http://obedy.zs-mat5.cz/
 */
@@ -29,17 +28,17 @@ SOFTWARE.
 import 'package:canteenlib/canteenlib.dart';
 import 'package:http/http.dart' as http;
 
-/// Reprezentuje kantýnu
+/// Reprezentuje kantýnu verze 2.18.19
 ///
 /// **Všechny metody v případě chyby vrací [Future] s chybovou hláškou.**
-class Canteen_2_18_19 extends Canteen {
+class Canteen2v18v19 extends Canteen {
   /// Sušenky potřebné pro komunikaci
   Map<String, String> cookies = {"JSESSIONID": "", "XSRF-TOKEN": ""};
 
   /// Je uživatel přihlášen?
   @override
   bool prihlasen = false;
-  Canteen_2_18_19(String url) : super(url);
+  Canteen2v18v19(String url) : super(url);
 
   /// Vrátí informace o uživateli ve formě instance [Uzivatel]
   @override
