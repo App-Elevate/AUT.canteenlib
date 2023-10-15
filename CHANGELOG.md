@@ -1,3 +1,9 @@
+## 3.0.1
+
+- Vyčištěn kód jidloparseru
+- přidány případy pro kategorizování
+- opraven crash při svátku ve verzi 2.18.19
+
 ## 3.0.0
 
 - Kompletně překopán celý systém s podporou více verzí zároveň a to bez breaking changes
