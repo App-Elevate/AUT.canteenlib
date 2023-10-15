@@ -1,6 +1,6 @@
 ## O knihovně
 
-Experimentální **neoficiální** webscrape knihovna pro komunikaci se systémem [iCanteen](https://www.z-ware.cz/internetove-objednavky).
+Experimentální **neoficiální** webscrape knihovna pro komunikaci se systémem [iCanteen](https://www.z-ware.cz/internetove-objednavky). Tento repozitář je nástupcem [hernik/canteenlib](https://git.mnau.xyz/hernik/canteenlib).
 
 ## Funkční funkce(\*)
 
