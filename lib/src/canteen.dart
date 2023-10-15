@@ -57,6 +57,7 @@ class Canteen {
       'pečivo',
       'chléb',
       'tyčinka',
+      'dezert',
       'šáteč' /*šáteček/šátečky */
     ];
 
