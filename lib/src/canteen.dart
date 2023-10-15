@@ -59,7 +59,7 @@ class Canteen {
           polevka += ', ';
         }
         polevka = '$polevka${cistyListJidel[i]}';
-      } else if (cistyListJidel[i].contains('salátový bar')) {
+      } else if (cistyListJidel[i].contains('salát') || cistyListJidel[i].contains('kompot')) {
         if (salatovyBar != '') {
           salatovyBar += ', ';
         }
@@ -69,7 +69,9 @@ class Canteen {
           piti += ', ';
         }
         piti = '$piti${cistyListJidel[i]}';
-      } else if (cistyListJidel[i].contains('ovoce')) {
+      } else if (cistyListJidel[i].contains('ovoce') ||
+          cistyListJidel[i].contains('pečivo') ||
+          cistyListJidel[i].contains('šáteč') /*šáteček/šátečky */) {
         if (ostatni != '') {
           ostatni += ', ';
         }
