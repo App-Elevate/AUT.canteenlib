@@ -50,5 +50,8 @@ jobs:
       - name: Removing credentials
         run: rm -rf .env
 
+      - name: Formatting for pub
+        run: dart format .
+
       - name: Publish
         run: dart pub publish --force
