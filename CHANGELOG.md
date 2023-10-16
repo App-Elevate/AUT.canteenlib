@@ -1,3 +1,8 @@
+## 3.0.4
+
+- Breaking: změněna chyba `nejdříve se musíte přihlásit` na `Nejdříve se musíte přihlásit`
+- přidána konzistence s touto chybou
+
 ## 3.0.3
 
 - přidán dezert do kategorie ostatní
