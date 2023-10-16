@@ -50,31 +50,19 @@ class Canteen2v18v19 extends Canteen {
       return Future.error("Uživatel není přihlášen");
     }
     var kreditMatch = double.tryParse(
-        RegExp(r' +<span id="Kredit" .+?>(.+?)(?=&)')
-            .firstMatch(r)!
-            .group(1)!
-            .replaceAll(",", ".")
-            .replaceAll(RegExp(r"[^\w.-]"), ""));
-    var uzivatelskeJmenoMatch =
-        RegExp(r'title="Přihlašovací jméno:\s*(.*?)">').firstMatch(r);
+        RegExp(r' +<span id="Kredit" .+?>(.+?)(?=&)').firstMatch(r)!.group(1)!.replaceAll(",", ".").replaceAll(RegExp(r"[^\w.-]"), ""));
+    var uzivatelskeJmenoMatch = RegExp(r'title="Přihlašovací jméno:\s*(.*?)">').firstMatch(r);
     var jmenoMatch = RegExp(r'(?<=jméno: <b>).+?(?=<\/b)').firstMatch(r);
     var prijmeniMatch = RegExp(r'(?<=příjmení: <b>).+?(?=<\/b)').firstMatch(r);
-    var kategorieMatch =
-        RegExp(r'(?<=kategorie: <b>).+?(?=<\/b)').firstMatch(r);
-    var ucetMatch =
-        RegExp(r'účet pro platby do jídelny:\s*<b>(\d*-*\d+\/?\d*)<\/b>')
-            .firstMatch(r)
-            ?.group(1)
-            ?.replaceAll(RegExp(r'<\/?b>'), ''); //odstranit html tag <b>
-    var varMatch =
-        RegExp(r'(?<=variabilní symbol: <b>).+?(?=<\/b)').firstMatch(r);
-    var specMatch =
-        RegExp(r'(?<=specifický symbol: <b>).+?(?=<\/b)').firstMatch(r);
+    var kategorieMatch = RegExp(r'(?<=kategorie: <b>).+?(?=<\/b)').firstMatch(r);
+    var ucetMatch = RegExp(r'účet pro platby do jídelny:\s*<b>(\d*-*\d+\/?\d*)<\/b>')
+        .firstMatch(r)
+        ?.group(1)
+        ?.replaceAll(RegExp(r'<\/?b>'), ''); //odstranit html tag <b>
+    var varMatch = RegExp(r'(?<=variabilní symbol: <b>).+?(?=<\/b)').firstMatch(r);
+    var specMatch = RegExp(r'(?<=specifický symbol: <b>).+?(?=<\/b)').firstMatch(r);
 
-    var uzivatelskeJmeno = uzivatelskeJmenoMatch
-            ?.group(1)
-            ?.substring(0, uzivatelskeJmenoMatch.group(1)?.indexOf('"')) ??
-        "";
+    var uzivatelskeJmeno = uzivatelskeJmenoMatch?.group(1)?.substring(0, uzivatelskeJmenoMatch.group(1)?.indexOf('"')) ?? "";
     var jmeno = jmenoMatch?.group(0) ?? "";
     var prijmeni = prijmeniMatch?.group(0) ?? "";
     var kategorie = kategorieMatch?.group(0) ?? "";
@@ -105,9 +93,7 @@ class Canteen2v18v19 extends Canteen {
   /// Převede cookie řetězec z požadavku do mapy
   void _parseCookies(String cookieString) {
     Map<String, String> cookies = this.cookies;
-    var regCookie = RegExp(r'([A-Z\-]+=.+?(?=;))|(remember-me=.+?)(?=;)')
-        .allMatches(cookieString)
-        .toList();
+    var regCookie = RegExp(r'([A-Z\-]+=.+?(?=;))|(remember-me=.+?)(?=;)').allMatches(cookieString).toList();
     for (var cook in regCookie) {
       var c = cook.group(0).toString().split("=");
       cookies[c[0]] = c[1];
@@ -129,10 +115,8 @@ class Canteen2v18v19 extends Canteen {
       await _getFirstSession();
     }
 
-    var res =
-        await http.post(Uri.parse("$url/j_spring_security_check"), headers: {
-      "Cookie":
-          "JSESSIONID=${cookies["JSESSIONID"]!}; XSRF-TOKEN=${cookies["XSRF-TOKEN"]!};",
+    var res = await http.post(Uri.parse("$url/j_spring_security_check"), headers: {
+      "Cookie": "JSESSIONID=${cookies["JSESSIONID"]!}; XSRF-TOKEN=${cookies["XSRF-TOKEN"]!};",
       "Content-Type": "application/x-www-form-urlencoded",
     }, body: {
       "j_username": user,
@@ -140,8 +124,7 @@ class Canteen2v18v19 extends Canteen {
       "terminal": "false",
       "_csrf": cookies["XSRF-TOKEN"],
       "_spring_security_remember_me": "on",
-      "targetUrl":
-          "/faces/secured/main.jsp?terminal=false&status=true&printer=&keyboard="
+      "targetUrl": "/faces/secured/main.jsp?terminal=false&status=true&printer=&keyboard="
     });
 
     if (res.headers['set-cookie']!.contains("remember-me=;")) {
@@ -164,9 +147,7 @@ class Canteen2v18v19 extends Canteen {
           "JSESSIONID=${cookies["JSESSIONID"]!}; XSRF-TOKEN=${cookies["XSRF-TOKEN"]!}${cookies.containsKey("remember-me") ? "; ${cookies["remember-me"]!};" : ";"}",
     });
 
-    if (r.statusCode != 200 ||
-        r.body.contains("fail") ||
-        r.body.contains("Chyba")) {
+    if (r.statusCode != 200 || r.body.contains("fail") || r.body.contains("Chyba")) {
       return Future.error("Chyba: ${r.body}");
     }
 
@@ -191,9 +172,7 @@ class Canteen2v18v19 extends Canteen {
   @override
   Future<List<Jidelnicek>> ziskejJidelnicek() async {
     var res = await _getRequest("/");
-    var reg = RegExp(
-            r'((?=<div class="jidelnicekDen">).+?(?=<div class="jidelnicekDen">))|((?=<div class="jidelnicekDen">).*<\/span>)',
-            dotAll: true)
+    var reg = RegExp(r'((?=<div class="jidelnicekDen">).+?(?=<div class="jidelnicekDen">))|((?=<div class="jidelnicekDen">).*<\/span>)', dotAll: true)
         .allMatches(res)
         .toList();
 
@@ -202,19 +181,12 @@ class Canteen2v18v19 extends Canteen {
     for (var t in reg) {
       // projedeme každý den individuálně
       var j = t.group(0).toString(); // převedeme text na něco přehlednějšího
-      var den = DateTime.parse(RegExp(r'(?<=day-).+?(?=")', dotAll: true)
-          .firstMatch(j)!
-          .group(0)
-          .toString());
-      var jidlaDenne = RegExp(
-              r'(?=<div class="container">).+?<\/div>.+?(?=<\/div>)',
-              dotAll: true)
+      var den = DateTime.parse(RegExp(r'(?<=day-).+?(?=")', dotAll: true).firstMatch(j)!.group(0).toString());
+      var jidlaDenne = RegExp(r'(?=<div class="container">).+?<\/div>.+?(?=<\/div>)', dotAll: true)
           .allMatches(j)
           .toList(); // získáme jednotlivá jídla pro den / VERZE 2.18
       if (jidlaDenne.isEmpty) {
-        jidlaDenne = RegExp(
-                r'(?=<div style="padding: 2 0 2 20">).+?(?=<\/div>)',
-                dotAll: true)
+        jidlaDenne = RegExp(r'(?=<div style="padding: 2 0 2 20">).+?(?=<\/div>)', dotAll: true)
             .allMatches(j)
             .toList(); // získáme jednotlivá jídla pro den / VERZE 2.10
       }
@@ -223,31 +195,19 @@ class Canteen2v18v19 extends Canteen {
 
       for (var jidloNaDen in jidlaDenne) {
         // projedeme vsechna jidla
-        var s = jidloNaDen.group(0)!.replaceAll(
-            RegExp(
-                r'[a-zA-ZěščřžýáíéÉÍÁÝŽŘČŠĚŤŇťň.,:]  [a-zA-ZěščřžýáíéÉÍÁÝŽŘČŠĚŤŇťň.,:]'),
-            ''); // odstraní dvojté mezery mezi písmeny
+        var s = jidloNaDen
+            .group(0)!
+            .replaceAll(RegExp(r'[a-zA-ZěščřžýáíéÉÍÁÝŽŘČŠĚŤŇťň.,:]  [a-zA-ZěščřžýáíéÉÍÁÝŽŘČŠĚŤŇťň.,:]'), ''); // odstraní dvojté mezery mezi písmeny
 
-        var vydejna = RegExp(r'(?<=<span style="color: #1b75bb;">).+?(?=<)')
-            .firstMatch(s); // název výdejny / verze 2.18
-        vydejna ??= RegExp(
-                r'(?<=<span class="smallBoldTitle" style="color: #1b75bb;">).+?(?=<)')
-            .firstMatch(s); // název výdejny / verze 2.10
+        var vydejna = RegExp(r'(?<=<span style="color: #1b75bb;">).+?(?=<)').firstMatch(s); // název výdejny / verze 2.18
+        vydejna ??= RegExp(r'(?<=<span class="smallBoldTitle" style="color: #1b75bb;">).+?(?=<)').firstMatch(s); // název výdejny / verze 2.10
 
-        var hlavni = RegExp(
-                r' {20}(([a-zA-ZěščřžýáíéÉÍÁÝŽŘČŠĚŤŇťň.,:\/]+ )+[a-zA-ZěščřžýáíéÉÍÁÝŽŘČŠĚŤŇťň.,:\/]+)',
-                dotAll: true)
+        var hlavni = RegExp(r' {20}(([a-zA-ZěščřžýáíéÉÍÁÝŽŘČŠĚŤŇťň.,:\/]+ )+[a-zA-ZěščřžýáíéÉÍÁÝŽŘČŠĚŤŇťň.,:\/]+)', dotAll: true)
             .firstMatch(s)!
             .group(1)
             .toString(); // Jídlo
 
-        jidla.add(Jidlo(
-            nazev: hlavni,
-            objednano: false,
-            varianta: vydejna!.group(0).toString(),
-            lzeObjednat: false,
-            den: den,
-            naBurze: false));
+        jidla.add(Jidlo(nazev: hlavni, objednano: false, varianta: vydejna!.group(0).toString(), lzeObjednat: false, den: den, naBurze: false));
       }
       jidelnicek.add(Jidelnicek(den, jidla));
     }
@@ -279,67 +239,36 @@ class Canteen2v18v19 extends Canteen {
       return Future.error(e);
     }
 
-    var obedDen = DateTime.parse(RegExp(r'(?<=day-).+?(?=")', dotAll: true)
-        .firstMatch(res)!
-        .group(0)
-        .toString());
+    var obedDen = DateTime.parse(RegExp(r'(?<=day-).+?(?=")', dotAll: true).firstMatch(res)!.group(0).toString());
     var jidla = <Jidlo>[];
-    var jidelnicek = RegExp(
-            r'(?<=<div class="jidWrapLeft">).+?((fa-clock)|(fa-ban))',
-            dotAll: true)
-        .allMatches(res)
-        .toList();
+    var jidelnicek = RegExp(r'(?<=<div class="jidWrapLeft">).+?((fa-clock)|(fa-ban))', dotAll: true).allMatches(res).toList();
     for (var obed in jidelnicek) {
       // formátování do třídy
-      var o = obed
-          .group(0)
-          .toString()
-          .replaceAll(RegExp(r'(   )+|([^>a-z]\n)'), '');
+      var o = obed.group(0).toString().replaceAll(RegExp(r'(   )+|([^>a-z]\n)'), '');
       var objednano = o.contains("Máte objednáno");
-      var lzeObjednat = !(o.contains("nelze zrušit") ||
-          o.contains("nelze objednat") ||
-          o.contains("nelze změnit"));
+      var lzeObjednat = !(o.contains("nelze zrušit") || o.contains("nelze objednat") || o.contains("nelze změnit"));
 
-      var cenaMatch =
-          RegExp(r'((?<=Cena objednaného jídla">).+?(?=&))').firstMatch(o);
-      cenaMatch ??=
-          RegExp(r'(?<=Cena při objednání jídla:&nbsp;).+?(?=&)').firstMatch(o);
-      cenaMatch ??=
-          RegExp(r'(?<=Cena při objednání jídla">).+?(?=&)').firstMatch(o);
+      var cenaMatch = RegExp(r'((?<=Cena objednaného jídla">).+?(?=&))').firstMatch(o);
+      cenaMatch ??= RegExp(r'(?<=Cena při objednání jídla:&nbsp;).+?(?=&)').firstMatch(o);
+      cenaMatch ??= RegExp(r'(?<=Cena při objednání jídla">).+?(?=&)').firstMatch(o);
 
-      var cena =
-          double.parse(cenaMatch!.group(0).toString().replaceAll(",", "."));
-      var jidlaProDen =
-          RegExp(r'<div class="jidWrapCenter.+?>(.+?)(?=<\/div>)', dotAll: true)
-              .firstMatch(o)!
-              .group(1)
-              .toString()
-              .replaceAll(' ,', ",")
-              .replaceAll(" <br>", "")
-              .replaceAll("\n", "");
-      var alergenyList = RegExp(r'(<span\s*title=.*?<\/span>)')
-          .allMatches(jidlaProDen)
-          .toList();
+      var cena = double.parse(cenaMatch!.group(0).toString().replaceAll(",", "."));
+      var jidlaProDen = RegExp(r'<div class="jidWrapCenter.+?>(.+?)(?=<\/div>)', dotAll: true)
+          .firstMatch(o)!
+          .group(1)
+          .toString()
+          .replaceAll(' ,', ",")
+          .replaceAll(" <br>", "")
+          .replaceAll("\n", "");
+      var alergenyList = RegExp(r'(<span\s*title=.*?<\/span>)').allMatches(jidlaProDen).toList();
       var alergeny = alergenyList.map<Alergen>((e) {
-        var jmeno = RegExp(r'<b>(.+?)<\/b>')
-            .firstMatch(e.group(1).toString())!
-            .group(1);
-        var popis =
-            RegExp(r'<\/b> - (.+)').firstMatch(e.group(1).toString())?.group(1);
-        var kod = RegExp(r'class="textGrey">(\d+?),?\s?')
-            .firstMatch(e.group(1).toString())
-            ?.group(1);
-        return Alergen(
-            nazev: jmeno!,
-            kod: kod == null ? null : int.parse(kod),
-            popis: popis);
+        var jmeno = RegExp(r'<b>(.+?)<\/b>').firstMatch(e.group(1).toString())!.group(1);
+        var popis = RegExp(r'<\/b> - (.+)').firstMatch(e.group(1).toString())?.group(1);
+        var kod = RegExp(r'class="textGrey">(\d+?),?\s?').firstMatch(e.group(1).toString())?.group(1);
+        return Alergen(nazev: jmeno!, kod: kod == null ? null : int.parse(kod), popis: popis);
       }).toList();
 
-      var vydejna = RegExp(
-              r'(?<=<span class="smallBoldTitle button-link-align">).+?(?=<)')
-          .firstMatch(o)!
-          .group(0)
-          .toString();
+      var vydejna = RegExp(r'(?<=<span class="smallBoldTitle button-link-align">).+?(?=<)').firstMatch(o)!.group(0).toString();
 
       String? orderUrl;
       String? burzaUrl;
@@ -351,9 +280,7 @@ class Canteen2v18v19 extends Canteen {
         }
       } else {
         // jinak nastavíme URL pro burzu
-        var match = RegExp(
-                r"""db\/dbProcessOrder\.jsp.+?type=((plusburza)|(minusburza)|(multiburza)).+?(?=')""")
-            .firstMatch(o);
+        var match = RegExp(r"""db\/dbProcessOrder\.jsp.+?type=((plusburza)|(minusburza)|(multiburza)).+?(?=')""").firstMatch(o);
         if (match != null) {
           burzaUrl = match.group(0)!.replaceAll("amp;", "");
         }
@@ -362,8 +289,7 @@ class Canteen2v18v19 extends Canteen {
       jidloJmeno = cleanString(jidloJmeno);
       jidla.add(
         Jidlo(
-          nazev: jidloJmeno.replaceAll(
-              r' (?=[^a-zA-ZěščřžýáíéĚŠČŘŽÝÁÍÉŤŇťň])', ''),
+          nazev: jidloJmeno.replaceAll(r' (?=[^a-zA-ZěščřžýáíéĚŠČŘŽÝÁÍÉŤŇťň])', ''),
           objednano: objednano,
           varianta: vydejna,
           lzeObjednat: lzeObjednat,
@@ -396,8 +322,7 @@ class Canteen2v18v19 extends Canteen {
     }
 
     if (!j.lzeObjednat || j.orderUrl == null || j.orderUrl!.isEmpty) {
-      return Future.error(
-          "Jídlo nelze objednat nebo nemá adresu pro objednání");
+      return Future.error("Jídlo nelze objednat nebo nemá adresu pro objednání");
     }
 
     try {
@@ -430,15 +355,13 @@ class Canteen2v18v19 extends Canteen {
     }
 
     if (j.burzaUrl == null || j.burzaUrl!.isEmpty) {
-      return Future.error(
-          "Jídlo nelze uložit do burzy nebo nemá adresu pro uložení");
+      return Future.error("Jídlo nelze uložit do burzy nebo nemá adresu pro uložení");
     }
 
     if (amount < 1 && j.burzaUrl!.endsWith("amount=")) {
       return Future.error("Nemůžeš dát do burzy méně než jeden kus");
     }
-    var finalUrl =
-        (j.burzaUrl!.endsWith("amount=")) ? "${j.burzaUrl}$amount" : j.burzaUrl;
+    var finalUrl = (j.burzaUrl!.endsWith("amount=")) ? "${j.burzaUrl}$amount" : j.burzaUrl;
     try {
       await _getRequest("/faces/secured/$finalUrl"); // provést operaci
     } catch (e) {
@@ -471,42 +394,25 @@ class Canteen2v18v19 extends Canteen {
       return Future.error(e);
     }
 
-    var dostupnaJidla =
-        RegExp(r'(?<=<tr class="mouseOutRow">).+?(?=<\/tr>)', dotAll: true)
-            .allMatches(res); // vyfiltrujeme jednotlivá jídla
+    var dostupnaJidla = RegExp(r'(?<=<tr class="mouseOutRow">).+?(?=<\/tr>)', dotAll: true).allMatches(res); // vyfiltrujeme jednotlivá jídla
     if (dostupnaJidla.isNotEmpty) {
       for (var burzaMatch in dostupnaJidla) {
         var bu = burzaMatch.group(0)!;
-        var data = RegExp(
-                r'((?<=<td>).+?(?=<))|(?<=<td align="left">).+?(?=<)|((?<=<td align="right">).+?(?=<))',
-                dotAll: true)
-            .allMatches(bu)
-            .toList();
+        var data =
+            RegExp(r'((?<=<td>).+?(?=<))|(?<=<td align="left">).+?(?=<)|((?<=<td align="right">).+?(?=<))', dotAll: true).allMatches(bu).toList();
 
         // Získat datum
-        var datumRaw = RegExp(r'\d\d\.\d\d\.\d{4}')
-            .firstMatch(data[1].group(0)!)!
-            .group(0)!
-            .split(".");
-        var datum =
-            DateTime.parse("${datumRaw[2]}-${datumRaw[1]}-${datumRaw[0]}");
+        var datumRaw = RegExp(r'\d\d\.\d\d\.\d{4}').firstMatch(data[1].group(0)!)!.group(0)!.split(".");
+        var datum = DateTime.parse("${datumRaw[2]}-${datumRaw[1]}-${datumRaw[0]}");
         // Získat variantu
         var varianta = data[0].group(0)!;
         // Získat název jídla
         var nazev = data[2].group(0)!.replaceAll(RegExp(r'\n|  '), "");
         // Získat počet kusů
         var pocet = int.parse(data[4].group(0)!.replaceAll(" ks", ""));
-        var url = RegExp(r"(?<=')db.+?(?=')")
-            .firstMatch(bu)!
-            .group(0)!
-            .replaceAll("&amp;", "&");
+        var url = RegExp(r"(?<=')db.+?(?=')").firstMatch(bu)!.group(0)!.replaceAll("&amp;", "&");
 
-        var jidlo = Burza(
-            den: datum,
-            varianta: varianta,
-            nazev: nazev,
-            pocet: pocet,
-            url: url);
+        var jidlo = Burza(den: datum, varianta: varianta, nazev: nazev, pocet: pocet, url: url);
         burza.add(jidlo);
       }
     }

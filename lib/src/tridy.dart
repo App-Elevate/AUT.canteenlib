@@ -1,10 +1,5 @@
 class JidloKategorizovano {
-  JidloKategorizovano(
-      {this.polevka,
-      this.hlavniJidlo,
-      this.salatovyBar,
-      this.piti,
-      this.ostatni});
+  JidloKategorizovano({this.polevka, this.hlavniJidlo, this.salatovyBar, this.piti, this.ostatni});
   String? polevka;
   String? hlavniJidlo;
   String? salatovyBar;
@@ -88,12 +83,7 @@ class Burza {
   /// Počet kusů tohoto jídla dostupného na burze
   int pocet;
 
-  Burza(
-      {required this.den,
-      required this.url,
-      required this.nazev,
-      required this.pocet,
-      this.varianta});
+  Burza({required this.den, required this.url, required this.nazev, required this.pocet, this.varianta});
 }
 
 /// Reprezentuje jídelníček pro jeden den
@@ -133,14 +123,7 @@ class Uzivatel {
   double kredit;
 
   Uzivatel(
-      {this.uzivatelskeJmeno,
-      this.jmeno,
-      this.prijmeni,
-      this.kategorie,
-      this.ucetProPlatby,
-      this.varSymbol,
-      this.kredit = 0.0,
-      this.specSymbol});
+      {this.uzivatelskeJmeno, this.jmeno, this.prijmeni, this.kategorie, this.ucetProPlatby, this.varSymbol, this.kredit = 0.0, this.specSymbol});
 }
 
 class LoginData {
