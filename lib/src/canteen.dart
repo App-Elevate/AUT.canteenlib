@@ -307,7 +307,7 @@ class Canteen {
   /// - [Jidelnicek] obsahující detaily, které vidí přihlášený uživatel
   Future<Jidelnicek> jidelnicekDen({DateTime? den}) async {
     if (canteenInstance == null) {
-      throw 'nejdříve se musíte přihlásit';
+      throw 'Nejdříve se musíte přihlásit';
     }
     return canteenInstance!.jidelnicekDen(den: den);
   }
@@ -315,7 +315,7 @@ class Canteen {
   /// Vrátí informace o uživateli ve formě instance [Uzivatel]
   Future<Uzivatel> ziskejUzivatele() async {
     if (canteenInstance == null) {
-      throw 'nejdříve se musíte přihlásit';
+      throw 'Nejdříve se musíte přihlásit';
     }
     return canteenInstance!.ziskejUzivatele();
   }
@@ -329,7 +329,7 @@ class Canteen {
   /// - Aktualizovaná instance [Jidlo] tohoto jídla
   Future<Jidlo> objednat(Jidlo j) async {
     if (canteenInstance == null) {
-      throw 'nejdříve se musíte přihlásit';
+      throw 'Nejdříve se musíte přihlásit';
     }
     return canteenInstance!.objednat(j);
   }
@@ -343,7 +343,7 @@ class Canteen {
   /// - Aktualizovaná instance [Jidlo] tohoto jídla NEBO [Future] jako chyba
   Future<Jidlo> doBurzy(Jidlo j, {int amount = 1}) async {
     if (canteenInstance == null) {
-      throw 'nejdříve se musíte přihlásit';
+      throw 'Nejdříve se musíte přihlásit';
     }
     return canteenInstance!.doBurzy(j, amount: amount);
   }
@@ -354,7 +354,7 @@ class Canteen {
   /// - List instancí [Burza], každá obsahuje informace o jídle v burze
   Future<List<Burza>> ziskatBurzu() async {
     if (canteenInstance == null) {
-      throw 'nejdříve se musíte přihlásit';
+      throw 'Nejdříve se musíte přihlásit';
     }
     return canteenInstance!.ziskatBurzu();
   }
@@ -368,7 +368,7 @@ class Canteen {
   /// - [bool], `true`, pokud bylo jídlo úspěšně objednáno z burzy, jinak `Exception`
   Future<bool> objednatZBurzy(Burza b) async {
     if (canteenInstance == null) {
-      throw 'nejdříve se musíte přihlásit';
+      throw 'Nejdříve se musíte přihlásit';
     }
     return canteenInstance!.objednatZBurzy(b);
   }
