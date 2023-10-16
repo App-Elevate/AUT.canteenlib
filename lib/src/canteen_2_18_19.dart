@@ -43,11 +43,11 @@ class Canteen2v18v19 extends Canteen {
   /// Vrátí informace o uživateli ve formě instance [Uzivatel]
   @override
   Future<Uzivatel> ziskejUzivatele() async {
-    if (!prihlasen) return Future.error("Uživatel není přihlášen");
+    if (!prihlasen) return Future.error("Nejdříve se musíte přihlásit");
     var r = await _getRequest("/web/setting");
     if (r.contains("přihlášení uživatele")) {
       prihlasen = false;
-      return Future.error("Uživatel není přihlášen");
+      return Future.error("Nejdříve se musíte přihlásit");
     }
     var kreditMatch = double.tryParse(
         RegExp(r' +<span id="Kredit" .+?>(.+?)(?=&)').firstMatch(r)!.group(1)!.replaceAll(",", ".").replaceAll(RegExp(r"[^\w.-]"), ""));
@@ -153,7 +153,7 @@ class Canteen2v18v19 extends Canteen {
 
     if (r.body.contains("přihlášení uživatele")) {
       prihlasen = false;
-      return Future.error("Uživatel není přihlášen");
+      return Future.error("Nejdříve se musíte přihlásit");
     }
 
     if (r.headers.containsKey("set-cookie")) {
@@ -226,7 +226,7 @@ class Canteen2v18v19 extends Canteen {
   @override
   Future<Jidelnicek> jidelnicekDen({DateTime? den}) async {
     if (!prihlasen) {
-      return Future.error("Uživatel není přihlášen");
+      return Future.error("Nejdříve se musíte přihlásit");
     }
 
     den ??= DateTime.now();
@@ -318,7 +318,7 @@ class Canteen2v18v19 extends Canteen {
   @override
   Future<Jidlo> objednat(Jidlo j) async {
     if (!prihlasen) {
-      return Future.error("Uživatel není přihlášen");
+      return Future.error("Nejdříve se musíte přihlásit");
     }
 
     if (!j.lzeObjednat || j.orderUrl == null || j.orderUrl!.isEmpty) {
@@ -351,7 +351,7 @@ class Canteen2v18v19 extends Canteen {
   @override
   Future<Jidlo> doBurzy(Jidlo j, {int amount = 1}) async {
     if (!prihlasen) {
-      return Future.error("Uživatel není přihlášen");
+      return Future.error("Nejdříve se musíte přihlásit");
     }
 
     if (j.burzaUrl == null || j.burzaUrl!.isEmpty) {
@@ -384,7 +384,7 @@ class Canteen2v18v19 extends Canteen {
   /// - List instancí [Burza], každá obsahuje informace o jídle v burze
   @override
   Future<List<Burza>> ziskatBurzu() async {
-    if (!prihlasen) return Future.error("Uživatel není přihlášen");
+    if (!prihlasen) return Future.error("Nejdříve se musíte přihlásit");
     List<Burza> burza = [];
 
     String res;
@@ -428,7 +428,7 @@ class Canteen2v18v19 extends Canteen {
   /// - [bool], `true`, pokud bylo jídlo úspěšně objednáno z burzy, jinak `Exception`
   @override
   Future<bool> objednatZBurzy(Burza b) async {
-    if (!prihlasen) return Future.error("Uživatel není přihlášen");
+    if (!prihlasen) return Future.error("Nejdříve se musíte přihlásit");
     try {
       await _getRequest("/faces/secured/${b.url!}");
     } catch (e) {
