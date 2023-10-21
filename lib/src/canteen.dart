@@ -248,9 +248,13 @@ class Canteen {
       var res = await http.get(Uri.parse(url));
       webHtml = res.body;
     } catch (e) {
-      url = url.replaceAll('https://', 'http://');
-      var res = await http.get(Uri.parse(url));
-      webHtml = res.body;
+      try {
+        url = url.replaceAll('https://', 'http://');
+        var res = await http.get(Uri.parse(url));
+        webHtml = res.body;
+      } catch (e) {
+        throw 'neplatné url';
+      }
     }
     Iterable<Match> matches = versionPattern.allMatches(webHtml);
     try {
@@ -259,7 +263,8 @@ class Canteen {
       version = version.replaceAll(' |', '');
       verze = version;
     } catch (e) {
-      throw Exception('Nepodařilo se získat verzi iCanteenu');
+      //pokud se nepodaří získat verzi, tak se nastaví na 0.0.0, abychom aspoň zkusili náhodné verze
+      verze = '0.0.0';
     }
     //vracení správné verze classy:
     return await _spravovatelVerzi(loginData: loginData);

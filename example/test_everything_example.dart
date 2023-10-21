@@ -8,8 +8,14 @@ void main(List<String> args) async {
   /// Vytvoření instance kantýny
   Canteen canteenInstance = Canteen(url);
 
+  try {
+    print(await canteenInstance.login(username, password) ? "login succesful" : "login failed"); // přihlásit se
+  } catch (e) {
+    print('Login Failed - either bad url or no internet');
+    return;
+  }
+
   /// Přihlášení (je nutné pro fungování všech funkcí krom tedy zíkání jídelníčku bez cen)
-  print(await canteenInstance.login(username, password) ? "login succesful" : "login failed"); // přihlásit se
 
   /// Získání informací o uživateli
   Uzivatel uzivatel = await canteenInstance.ziskejUzivatele();
