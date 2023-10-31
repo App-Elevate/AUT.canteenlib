@@ -5,26 +5,26 @@ import 'package:dotenv/dotenv.dart';
 //TODO: vylepšit testy
 void main() {
   group('A group of tests', () {
-    var env = DotEnv(includePlatformEnvironment: true)..load();
-    Canteen c = Canteen(env["URL"]!);
+    var envSecrets = DotEnv(includePlatformEnvironment: true)..load();
+    Canteen canteenInstance = Canteen(envSecrets["URL"]!);
 
     test('Log-in test', () {
-      c.login(env["USER"]!, env["PASS"]!).then((r) => expect(r, true));
+      canteenInstance.login(envSecrets["USER"]!, envSecrets["PASS"]!).then((r) => expect(r, true));
     });
 
     test('First Test', () {
-      c.login(env["USER"]!, env["PASS"]!).then((r) {
-        c.jidelnicekDen().then((t) {
-          expect(DateTime.now().day, t.den.day);
+      canteenInstance.login(envSecrets["USER"]!, envSecrets["PASS"]!).then((r) {
+        canteenInstance.jidelnicekDen().then((jidelnicek) {
+          expect(DateTime.now().day, jidelnicek.den.day);
         });
       });
     });
 
     test('Neprázdný jídelníček', () {
-      c.login(env["USER"]!, env["PASS"]!).then((r) {
-        c.jidelnicekDen(den: DateTime.now().add(Duration(days: 5))).then((t) {
-          print(t.jidla[0].nazev);
-          expect(t.jidla[0].nazev.isNotEmpty, true);
+      canteenInstance.login(envSecrets["USER"]!, envSecrets["PASS"]!).then((_) {
+        canteenInstance.jidelnicekDen(den: DateTime.now().add(Duration(days: 5))).then((jidelnicek) {
+          print(jidelnicek.jidla[0].nazev);
+          expect(jidelnicek.jidla[0].nazev.isNotEmpty, true);
         });
       });
     });
