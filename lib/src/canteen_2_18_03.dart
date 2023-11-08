@@ -291,7 +291,8 @@ class Canteen2v18v03 extends Canteen {
         String alergeny = jidlaProDen.split('(')[1].trim();
         alergeny = alergeny.replaceAll(')', '');
         List<String> alergenyListRaw = alergeny.split(', ');
-        for (int i = 0; i < alergenyListRaw.length; i++) {
+        int mensiDelka = alergenyListRaw.length < alergenyDetailMatch.length ? alergenyListRaw.length : alergenyDetailMatch.length;
+        for (int i = 0; i < mensiDelka; i++) {
           alergenyList.add(Alergen(nazev: alergenyListRaw[i], popis: alergenyDetailMatch[i].group(1)));
         }
       }
