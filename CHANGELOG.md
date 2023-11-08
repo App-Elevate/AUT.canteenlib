@@ -1,3 +1,7 @@
+## 3.0.5
+
+- Fix pro Range Error při získávání jídelníčku
+
 ## 3.0.4
 
 - Breaking: změněna chyba `nejdříve se musíte přihlásit` na `Nejdříve se musíte přihlásit`
