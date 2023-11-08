@@ -15,6 +15,12 @@ _\* Knihovna nemusí fungovat na všech instancích systému iCanteen, proto ž�
 
 ### [Otestované instance iCanteen](https://github.com/tpkowastaken/canteenlib/blob/main/COMPATIBILITY.md)
 
+## TODO
+
+```
+přepsat na systém parsování html
+```
+
 ## Licence
 
 ```
