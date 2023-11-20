@@ -8,6 +8,7 @@ void main(List<String> args) async {
   /// Vytvoření instance kantýny
   Canteen canteenInstance = Canteen(url);
 
+  /// Přihlášení (je nutné pro fungování všech funkcí krom tedy zíkání jídelníčku bez cen)
   try {
     print(await canteenInstance.login(username, password) ? "login succesful" : "login failed"); // přihlásit se
   } catch (e) {
@@ -15,7 +16,7 @@ void main(List<String> args) async {
     return;
   }
 
-  /// Přihlášení (je nutné pro fungování všech funkcí krom tedy zíkání jídelníčku bez cen)
+
 
   /// Získání informací o uživateli
   Uzivatel uzivatel = await canteenInstance.ziskejUzivatele();
