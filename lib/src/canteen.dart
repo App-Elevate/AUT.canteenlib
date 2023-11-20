@@ -63,7 +63,7 @@ class Canteen {
 
     bool kategorie(String vec, List<String> kategorie) {
       for (int i = 0; i < kategorie.length; i++) {
-        if (vec.contains(kategorie[i])) {
+        if (vec.toLowerCase().contains(kategorie[i].toLowerCase())) {
           return true;
         }
       }
