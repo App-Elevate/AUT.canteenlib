@@ -15,17 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      # Note: This workflow uses the latest stable version of the Dart SDK.
-      # You can specify other versions if desired, see documentation here:
-      # https://github.com/dart-lang/setup-dart/blob/main/README.md
-      - uses: dart-lang/setup-dart@v1
-
       - name: Extract release notes
         id: extract-release-notes
         run: |
-          # Extract contents from the top until the second header
-          FILE_CONTENTS=$(sed -n '/^## /q;p' CHANGELOG.md)
+          # Use awk to extract lines until the second header
+          FILE_CONTENTS=$(awk '/^## /{if(++n==2)exit} {print}' CHANGELOG.md)
+
+          # Escape newlines and set the output
+          FILE_CONTENTS="${FILE_CONTENTS//'%'/'%25'}"
+          FILE_CONTENTS="${FILE_CONTENTS//$'\n'/'%0A'}"
+          FILE_CONTENTS="${FILE_CONTENTS//$'\r'/'%0D'}"
+
           echo "::set-output name=contents::${FILE_CONTENTS}"
 
       - name: Update Release Description
@@ -33,8 +33,12 @@ jobs:
         with:
           files: ""
           token: ${{ secrets.GITHUB_TOKEN }}
-          body: |
-            ${{ steps.extract-release-notes.outputs.contents }}
+          body: ${{ steps.extract-release-notes.outputs.contents }}
+
+      # Note: This workflow uses the latest stable version of the Dart SDK.
+      # You can specify other versions if desired, see documentation here:
+      # https://github.com/dart-lang/setup-dart/blob/main/README.md
+      - uses: dart-lang/setup-dart@v1
 
       - name: Install dependencies
         run: dart pub get
