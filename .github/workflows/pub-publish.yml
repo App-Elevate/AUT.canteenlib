@@ -21,18 +21,19 @@ jobs:
       # https://github.com/dart-lang/setup-dart/blob/main/README.md
       - uses: dart-lang/setup-dart@v1
 
-      - name: Read the first header from changelog
-        id: read-header
+      - name: Extract release notes
+        id: extract-release-notes
         run: |
-          FIRST_HEADER=$(awk '/^#/{if (!seen) {print; seen=1}}' CHANGELOG.md)
-          echo "::set-output name=header::${FIRST_HEADER}"
+          # Extract contents from the top until the second header
+          FILE_CONTENTS=$(sed -n '/^## /q;p' CHANGELOG.md)
+          echo "::set-output name=contents::${FILE_CONTENTS}"
 
       - name: Update Release Description
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            ${{ steps.read-header.outputs.header }}
+            ${{ steps.extract-release-notes.outputs.contents }}
 
       - name: Install dependencies
         run: dart pub get
