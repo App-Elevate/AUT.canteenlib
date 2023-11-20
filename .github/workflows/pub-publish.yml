@@ -11,6 +11,7 @@ jobs:
   publish:
     permissions:
       id-token: write # Required for authentication using OIDC
+      contents: write # Required for writing to the release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -19,6 +20,19 @@ jobs:
       # You can specify other versions if desired, see documentation here:
       # https://github.com/dart-lang/setup-dart/blob/main/README.md
       - uses: dart-lang/setup-dart@v1
+
+      - name: Read the first header from changelog
+        id: read-header
+        run: |
+          FIRST_HEADER=$(awk '/^#/{if (!seen) {print; seen=1}}' CHANGELOG.md)
+          echo "::set-output name=header::${FIRST_HEADER}"
+
+      - name: Update Release Description
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            ${{ steps.read-header.outputs.header }}
 
       - name: Install dependencies
         run: dart pub get
