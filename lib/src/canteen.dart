@@ -152,14 +152,15 @@ class Canteen {
   }
 
   String cleanString(String string) {
-    return string
-        .replaceAll('\n', '')
-        .replaceAll('\t', '')
-        .replaceAll('\r', '')
-        .replaceAll('  ', ' ')
-        .replaceAll(' *', '')
-        .replaceAll('*', '')
-        .trim();
+    string = string.replaceAll('\n', '');
+    string = string.replaceAll('\t', '');
+    string = string.replaceAll('\r', '');
+    string = string.replaceAll('  ', ' ');
+    string = string.replaceAll(' * ,', ',');
+    string = string.replaceAll(' *,', ',');
+    string = string.replaceAll('*', '');
+    string = string.trim();
+    return string;
   }
 
   String parseHtmlString(String htmlString) {
