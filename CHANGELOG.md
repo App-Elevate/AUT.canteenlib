@@ -1,3 +1,7 @@
+## 3.0.6
+
+- Fix pro kategorizaci
+
 ## 3.0.5
 
 - Fix pro Range Error při získávání jídelníčku
