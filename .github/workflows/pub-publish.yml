@@ -31,6 +31,7 @@ jobs:
       - name: Update Release Description
         uses: softprops/action-gh-release@v1
         with:
+          files: ""
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             ${{ steps.extract-release-notes.outputs.contents }}
