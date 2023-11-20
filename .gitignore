@@ -12,3 +12,4 @@ pubspec.lock
 *.test.dart
 .vscode/launch.json
 .vscode/settings.json
+.vscode
