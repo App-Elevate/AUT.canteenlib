@@ -158,7 +158,11 @@ class Canteen {
     string = string.replaceAll('  ', ' ');
     string = string.replaceAll(' * ,', ',');
     string = string.replaceAll(' *,', ',');
+    string = string.replaceAll(' *', '');
     string = string.replaceAll('*', '');
+    string = string.replaceAll(' :', '');
+    string = string.replaceAll(':', '');
+    string = string.replaceAll(' ,', ',');
     string = string.trim();
     return string;
   }
