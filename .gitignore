@@ -13,3 +13,4 @@ pubspec.lock
 .vscode/launch.json
 .vscode/settings.json
 .vscode
+hidden_testing
