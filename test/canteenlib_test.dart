@@ -1,29 +1,37 @@
+import 'dart:async';
+
 import 'package:canteenlib/canteenlib.dart';
 import 'package:test/test.dart';
 import 'package:dotenv/dotenv.dart';
 
-DotEnv envSecrets = DotEnv(includePlatformEnvironment: true)..load();
-Canteen canteenInstance = Canteen(envSecrets["URL"]!);
+DotEnv? envSecrets;
+Canteen? canteenInstance;
 Jidelnicek? jidelnicek;
 Uzivatel? uzivatel;
 Future<void> ziskatUzivatele() async {
-  uzivatel ??= await canteenInstance.ziskejUzivatele();
+  envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
+  canteenInstance ??= Canteen(envSecrets!["URL"]!);
+  uzivatel ??= await canteenInstance!.ziskejUzivatele();
 }
 
 Future<void> ziskatJidelnicek() async {
+  envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
+  canteenInstance ??= Canteen(envSecrets!["URL"]!);
   DateTime funkcniDatum = DateTime(2023, 11, 22);
-  jidelnicek ??= await canteenInstance.jidelnicekDen(den: funkcniDatum);
+  jidelnicek ??= await canteenInstance!.jidelnicekDen(den: funkcniDatum);
 }
 
-Future<void> prihlasitSe() async {
-  if (canteenInstance.prihlasen) return;
-  await canteenInstance.login(envSecrets["USER"]!, envSecrets["PASS"]!).then((r) => expect(r, true));
+Future<bool> prihlasitSe() async {
+  envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
+  canteenInstance ??= Canteen(envSecrets!["URL"]!);
+  if (canteenInstance!.prihlasen) return true;
+  return await canteenInstance!.login(envSecrets!["USER"]!, envSecrets!["PASS"]!);
 }
 
 void main() {
   group('Test přihlášený Uživatel:', () {
     test('Přihlášení', () async {
-      await canteenInstance.login(envSecrets["USER"]!, envSecrets["PASS"]!).then((r) => expect(r, true));
+      expect(await prihlasitSe(), true);
     });
 
     group('Jídelníček:', () {
