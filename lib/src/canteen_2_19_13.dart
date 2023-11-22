@@ -194,7 +194,14 @@ class Canteen2v19v13 extends Canteen {
             .group(1)
             .toString(); // Jídlo
 
-        jidla.add(Jidlo(nazev: hlavni, objednano: false, varianta: vydejna!.group(0).toString(), lzeObjednat: false, den: den, naBurze: false));
+        jidla.add(Jidlo(
+            nazev: hlavni,
+            objednano: false,
+            varianta: vydejna!.group(0).toString(),
+            lzeObjednat: false,
+            den: den,
+            naBurze: false,
+            kategorizovano: parseJidlo(hlavni)));
       }
       jidelnicek.add(Jidelnicek(den, jidla));
     }
