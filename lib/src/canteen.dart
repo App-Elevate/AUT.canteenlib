@@ -25,7 +25,8 @@ import 'package:canteenlib/canteenlib.dart';
 
 import 'canteen_versions.dart';
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart';
+import 'package:html/parser.dart' as parser;
+import 'package:html/dom.dart' as dom;
 
 class Canteen {
   /// URL iCanteenu
@@ -169,8 +170,8 @@ class Canteen {
 
   String parseHtmlString(String htmlString) {
     try {
-      final document = parse(htmlString);
-      final String parsedString = parse(document.body!.text).documentElement!.text;
+      final dom.Document document = parser.parse(htmlString);
+      final String parsedString = parser.parse(document.body!.text).documentElement!.text;
       return parsedString;
     } catch (e) {
       return htmlString;
