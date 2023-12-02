@@ -1,0 +1,55 @@
+name: "Podpora nepodporované verze Icanteen"
+title: "Podpora verze: 0.0.0"
+description: "Formulář na podporu nové verze. (V nadpisu změňte [0.0.0] na verzi používanou Vaší jídelnou)"
+labels: ["new version"]
+projects: ["Autojidelna/1"]
+assignees:
+  - tpkowastaken
+body:
+  - type: markdown
+    attributes:
+      value: "# Podpora verze Icanteen"
+
+  - type: input
+    id: contact
+    attributes:
+      label: E-mail / Discord
+      description: Způsob Vás kontaktovat v případě potřeby informací
+      placeholder: email@example.com
+    validations:
+      required: false
+  - type: input
+    id: url
+    attributes:
+      label: URL jídelny
+      placeholder: jidelna.trebesin.cz
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Requesty a html kód
+        Pro implementaci bez sdílení přihlašovacích údajů potřebujeme Vaší pomoc. K implementaci potřebujeme:
+
+  - type: textarea
+    id: login-http-request
+    attributes:
+      label: 1) HTTP login request
+      description: HTTP request který se odesílá při přihlášení
+      value: "`  `"
+    validations:
+      required: true
+  - type: textarea
+    id: html-food
+    attributes:
+      label: 2) HTML kód stránky s obědy
+      value: "`  `"
+    validations:
+      required: true
+  - type: textarea
+    id: html-user
+    attributes:
+      label: 3) HTML kód stránky o uživateli (v nastavení)
+      value: "`  `"
+    validations:
+      required: true
