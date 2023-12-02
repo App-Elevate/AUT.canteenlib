@@ -1,6 +1,6 @@
 # V tomto souboru je rozepsaná každá featura pro každou instituci. Je to takový to-do list
 
-➖ - v instituci není featura potřeba
+➖ - v instituci není featura potřeba nebo není v dané verzi icanteen
 ✅ - featura funguje
 ❌ - featura nefunguje
 ❓ - featura funguje částečně nebo nelze vyzkoušet
@@ -109,8 +109,8 @@
   - funguje objednávání ✅
   - funguje zrušení ✅
 - Burza
-  - získání burzy
-  - Objednávání z burzy
+  - získání burzy ✅
+  - Objednávání z burzy ✅
   - vložení jídla na burzu ✅
   - zrušit vložení jídla na burzu ✅
   - počet ➖
