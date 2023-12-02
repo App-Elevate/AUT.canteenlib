@@ -50,16 +50,37 @@ class Canteen {
       cistyListJidel[i] = cistyListJidel[i].trimLeft();
     }
     //konstantní řetězce pro kategorizaci
-    List<String> polevky = ['Polévka', 'fridátové nudle'];
+    List<String> polevky = [
+      'Polévka',
+      'Polívka',
+      'zeleninový krém',
+      'fridátové nudle',
+      'vývar',
+      'frit. n' /*fritované nudle*/,
+      'frit.n' /*fritované nudle*/,
+    ];
     List<String> salatoveBary = ['salát', 'kompot'];
-    List<String> piticka = ['nápoj', 'čaj', 'káva'];
+    List<String> piticka = [
+      'nápoj',
+      'čaj',
+      'káva',
+      'sirup',
+      'voda',
+      'mléko',
+      'vit. nápoj' /*vitamínový nápoj*/,
+      'vit.nápoj' /*vitamínový nápoj*/,
+      'džus',
+      'kakao',
+    ];
     List<String> ostatniVeci = [
       'ovoce',
       'pečivo',
       'chléb',
+      'rohlík',
       'tyčinka',
       'dezert',
-      'šáteč' /*šáteček/šátečky */
+      'termix'
+          'šáteč' /*šáteček/šátečky */
     ];
 
     bool kategorie(String vec, List<String> kategorie) {
