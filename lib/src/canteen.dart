@@ -193,6 +193,9 @@ class Canteen {
       case '2.19.13':
         canteenInstance = Canteen2v19v13(url);
         break;
+      case '2.10.27':
+        canteenInstance = Canteen2v10v27(url);
+        break;
       default:
         if (loginData == null) {
           //pokud není loginData, tak se nemůže získat verze. Tudíž prostě zkusíme jednu verzi a je možné, že nebude fungovat...
@@ -221,7 +224,15 @@ class Canteen {
                 throw 'Nepodařilo se přihlásit do iCanteenu';
               }
             } catch (e) {
-              rethrow;
+              try {
+                canteenInstance = Canteen2v10v27(url);
+                await canteenInstance!.login(loginData.username, loginData.password);
+                if (!canteenInstance!.prihlasen) {
+                  throw 'Nepodařilo se přihlásit do iCanteenu';
+                }
+              } catch (e) {
+                rethrow;
+              }
             }
           }
         }
