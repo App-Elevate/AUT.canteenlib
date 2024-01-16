@@ -29,6 +29,9 @@ import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 
 class Canteen {
+  /// Seznam chybějících funkcí pro danou verzi iCanteenu - funkce, které nejsou ve vanilla webové verzi iCanteenu
+  List<Features> missingFeatures = [];
+
   /// URL iCanteenu
   String url;
 
@@ -261,6 +264,7 @@ class Canteen {
     if (loginData != null && !canteenInstance!.prihlasen) {
       await canteenInstance!.login(loginData.username, loginData.password);
     }
+    missingFeatures = canteenInstance!.missingFeatures;
     return canteenInstance!;
   }
 

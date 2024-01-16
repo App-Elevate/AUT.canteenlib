@@ -66,6 +66,26 @@ class Alergen {
   const Alergen({required this.nazev, this.kod, this.popis});
 }
 
+enum Features {
+  /// Získat informace o přihlášeném uživateli
+  ziskatUzivatele,
+
+  /// Získat informace o jídelníčku zvěřejněném na webu bez nutnosti přihlášení
+  jidelnicekBezCen,
+
+  /// Získat informace o jídelníčku zvěřejněném na webu s nutností přihlášení + objednání obědů
+  jidelnicekDen,
+
+  // Informace o jídelníčku za měsíc
+  jidelnicekMesic,
+
+  /// burza
+  burza,
+
+  /// alergeny
+  alergeny,
+}
+
 /// Reprezentuje cizí jídlo na burze
 class Burza {
   /// Den, který je jídlo vydáváno

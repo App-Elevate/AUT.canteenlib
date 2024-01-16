@@ -35,6 +35,7 @@ void main() {
     });
 
     group('Jídelníček:', () {
+      if ((canteenInstance?.missingFeatures ?? List<Features>.empty()).contains(Features.jidelnicekDen)) return;
       test('Jídelníček není prázdný', () async {
         await prihlasitSe();
         await ziskatJidelnicek();
@@ -82,11 +83,16 @@ void main() {
       test('Jídelníček má alergeny', () async {
         await prihlasitSe();
         await ziskatJidelnicek();
+        if (canteenInstance!.missingFeatures.contains(Features.alergeny)) {
+          expect(true, true);
+          return;
+        }
         expect(jidelnicek!.jidla[0].alergeny.isNotEmpty, true);
       });
     });
 
     group('Uživatel', () {
+      if ((canteenInstance?.missingFeatures ?? List<Features>.empty()).contains(Features.ziskatUzivatele)) return;
       test('Uživatel má kredit', () async {
         await prihlasitSe();
         await ziskatUzivatele();
