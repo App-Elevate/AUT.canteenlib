@@ -34,6 +34,7 @@
       - název
     - rozdělení na kategorie
     - blokováno (vypršela platnost)
+- Jídelníček pro měsíc
 - Objednávání
   - funguje objednávání
   - funguje zrušení
@@ -56,7 +57,7 @@
   - specifický symbol ❓
   - Uživatelské jméno ✅
 - Jídelníček pro den ✅
-  - správný počet jídel ❓ - v autojídelně vyřešeno wrapperem.
+  - správný počet jídel ✅
   - jídlo ✅
     - název ✅
     - cena ✅
@@ -69,6 +70,7 @@
       - podrobnosti ✅
       - název ✅
     - rozdělení na kategorie ✅
+- Jídelníček pro měsíc ✅
 - Objednávání
   - funguje objednávání ✅
   - funguje zrušení ✅
@@ -92,7 +94,7 @@
   - specifický symbol ❓
   - Uživatelské jméno ✅
 - Jídelníček pro den ✅
-  - správný počet jídel ❓ - v autojídelně vyřešeno wrapperem.
+  - správný počet jídel ✅
   - jídlo ✅
     - název ✅ má dvě mezery
     - cena ✅
@@ -105,6 +107,7 @@
       - podrobnosti ✅
       - název ✅
     - rozdělení na kategorie ✅
+- Jídelníček pro měsíc ❌
 - Objednávání
   - funguje objednávání ✅
   - funguje zrušení ✅
