@@ -82,6 +82,9 @@ enum Features {
   /// burza
   burza,
 
+  // dát počet jídel na burzu
+  burzaAmount,
+
   /// alergeny
   alergeny,
 }

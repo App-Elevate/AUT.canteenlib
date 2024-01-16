@@ -37,6 +37,9 @@ class Canteen2v18v03 extends Canteen {
   /// icanteen je v této verzi buglý, takže je potřeba si uživatelské jméno pamatovat
   String username = "";
 
+  @override
+  get missingFeatures => <Features>[Features.burzaAmount];
+
   /// Sušenky potřebné pro komunikaci
   Map<String, String> cookies = {"JSESSIONID": "", "XSRF-TOKEN": ""};
 
@@ -325,6 +328,7 @@ class Canteen2v18v03 extends Canteen {
   ///
   /// Výstup:
   /// - list instancí [Jidelnicek] obsahující detaily, které vidí přihlášený uživatel
+  @override
   Future<List<Jidelnicek>> jidelnicekMesic() async {
     if (!prihlasen) {
       return Future.error("Nejdříve se musíte přihlásit");

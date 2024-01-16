@@ -35,6 +35,9 @@ class Canteen2v18v19 extends Canteen {
   /// Sušenky potřebné pro komunikaci
   Map<String, String> cookies = {"JSESSIONID": "", "XSRF-TOKEN": ""};
 
+  @override
+  get missingFeatures => <Features>[Features.jidelnicekMesic, Features.burzaAmount];
+
   /// Je uživatel přihlášen?
   @override
   bool prihlasen = false;
