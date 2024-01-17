@@ -65,25 +65,42 @@ class Canteen {
     List<String> salatoveBary = ['salát', 'kompot'];
     List<String> piticka = [
       'nápoj',
+      'napoj',
       'čaj',
+      'caj',
       'káva',
+      'kava',
+      'mošt',
+      'most',
       'sirup',
       'voda',
       'mléko',
+      'mleko',
       'vit. nápoj' /*vitamínový nápoj*/,
       'vit.nápoj' /*vitamínový nápoj*/,
       'džus',
+      'dzus',
       'kakao',
     ];
     List<String> ostatniVeci = [
       'ovoce',
       'pečivo',
+      'pecivo',
       'chléb',
+      'chleb',
       'rohlík',
+      'rohlik',
       'tyčinka',
+      'tycinka',
       'dezert',
-      'termix'
-          'šáteč' /*šáteček/šátečky */
+      'termix',
+      'tvarohá' /*Tvaroháček/Tvaroháčky*/,
+      'tvaroha' /*tvaroháček/tvaroháčky*/,
+      'šáteč' /*šáteček/šátečky */,
+      'satec' /*šáteček/šátečky */,
+      'šateč',
+      'šatec',
+      'sateč',
     ];
 
     bool kategorie(String vec, List<String> kategorie) {
