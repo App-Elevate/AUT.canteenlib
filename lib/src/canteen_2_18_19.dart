@@ -217,6 +217,106 @@ class Canteen2v18v19 extends Canteen {
     return jidelnicek;
   }
 
+  /// Získá jídlo do konce měsíce od aktuálního dne
+  ///
+  /// __Vyžaduje přihlášení pomocí [login]__
+  ///
+  /// Výstup:
+  /// - list instancí [Jidelnicek] obsahující detaily, které vidí přihlášený uživatel
+  @override
+  Future<List<Jidelnicek>> jidelnicekMesic() async {
+    if (!prihlasen) {
+      return Future.error("Nejdříve se musíte přihlásit");
+    }
+    String res;
+    try {
+      await jidelnicekDen(); // replikování komunikace probíhající s prohlížečem, jinak nevrátí informace o obědech...
+      res = await _getRequest("/faces/secured/month.jsp");
+    } catch (e) {
+      return Future.error(e);
+    }
+    var jidla = <Jidlo>[];
+    var jidelnicek = RegExp(r'(?<=<div class="jidWrapLeft">).+?((fa-clock)|(fa-ban))', dotAll: true).allMatches(res).toList();
+    for (var obed in jidelnicek) {
+      jidla.add(_parsePrihlasenyJidlo(obed));
+    }
+    Map<DateTime, List<Jidlo>> jidlaMap = {};
+    for (var jidlo in jidla) {
+      if (jidlaMap.containsKey(jidlo.den)) {
+        jidlaMap[jidlo.den]!.add(jidlo);
+      } else {
+        jidlaMap[jidlo.den] = [jidlo];
+      }
+    }
+    List<Jidelnicek> jidelnicekList = [];
+    for (var jidelnicek in jidlaMap.values) {
+      jidelnicekList.add(Jidelnicek(jidelnicek[0].den, jidelnicek));
+    }
+    return jidelnicekList;
+  }
+
+  Jidlo _parsePrihlasenyJidlo(obed) {
+    // formátování do třídy
+    var o = obed.group(0).toString().replaceAll(RegExp(r'(   )+|([^>a-z]\n)'), '');
+    var objednano = o.contains("Máte objednáno");
+    var obedDen = DateTime.parse(RegExp(r'(?<=day-).+?(?=")', dotAll: true).firstMatch(o)!.group(0).toString());
+    var lzeObjednat = !(o.contains("nelze zrušit") || o.contains("nelze objednat") || o.contains("nelze změnit"));
+
+    var cenaMatch = RegExp(r'((?<=Cena objednaného jídla">).+?(?=&))').firstMatch(o);
+    cenaMatch ??= RegExp(r'(?<=Cena při objednání jídla:&nbsp;).+?(?=&)').firstMatch(o);
+    cenaMatch ??= RegExp(r'(?<=Cena při objednání jídla">).+?(?=&)').firstMatch(o);
+
+    var cena = double.parse(cenaMatch!.group(0).toString().replaceAll(",", "."));
+    var jidlaProDen = RegExp(r'<div class="jidWrapCenter.+?>(.+?)(?=<\/div>)', dotAll: true)
+        .firstMatch(o)!
+        .group(1)
+        .toString()
+        .replaceAll(' ,', ",")
+        .replaceAll(" <br>", "")
+        .replaceAll("\n", "");
+    var alergenyList = RegExp(r'(<span\s*title=.*?<\/span>)').allMatches(jidlaProDen).toList();
+    var alergeny = alergenyList.map<Alergen>((e) {
+      var jmeno = RegExp(r'<b>(.+?)<\/b>').firstMatch(e.group(1).toString())!.group(1);
+      var popis = RegExp(r'<\/b> - (.+)').firstMatch(e.group(1).toString())?.group(1);
+      var kod = RegExp(r'class="textGrey">(\d+?),?\s?').firstMatch(e.group(1).toString())?.group(1);
+      return Alergen(nazev: jmeno!, kod: kod == null ? null : int.parse(kod), popis: popis);
+    }).toList();
+
+    var vydejna = RegExp(r'(?<=<span class="smallBoldTitle button-link-align">).+?(?=<)').firstMatch(o)!.group(0).toString();
+
+    String? orderUrl;
+    String? burzaUrl;
+    if (lzeObjednat) {
+      // pokud lze objednat, nastavíme adresu pro objednání
+      var match = RegExp(r"(?<=ajaxOrder\(this, ').+?(?=')").firstMatch(o);
+      if (match != null) {
+        orderUrl = match.group(0)!.replaceAll("amp;", "");
+      }
+    } else {
+      // jinak nastavíme URL pro burzu
+      var match = RegExp(r"""db\/dbProcessOrder\.jsp.+?type=((plusburza)|(minusburza)|(multiburza)).+?(?=')""").firstMatch(o);
+      if (match != null) {
+        burzaUrl = match.group(0)!.replaceAll("amp;", "");
+      }
+    }
+    var jidloJmeno = jidlaProDen.split('<sub>')[0];
+    jidloJmeno = cleanString(jidloJmeno);
+    return Jidlo(
+      nazev: jidloJmeno.replaceAll(r' (?=[^a-zA-ZěščřžýáíéĚŠČŘŽÝÁÍÉŤŇťň])', ''),
+      objednano: objednano,
+      varianta: vydejna,
+      lzeObjednat: lzeObjednat,
+      cena: cena,
+      orderUrl: orderUrl,
+      den: obedDen,
+      burzaUrl: burzaUrl,
+      naBurze: (burzaUrl == null) ? false : burzaUrl.contains("minusburza"),
+      alergeny: alergeny,
+      kategorizovano: parseJidlo(jidloJmeno),
+    );
+    // KONEC formátování do třídy
+  }
+
   /// Získá jídlo pro daný den
   ///
   /// __Vyžaduje přihlášení pomocí [login]__
@@ -242,73 +342,13 @@ class Canteen2v18v19 extends Canteen {
       return Future.error(e);
     }
 
-    var obedDen = DateTime.parse(RegExp(r'(?<=day-).+?(?=")', dotAll: true).firstMatch(res)!.group(0).toString());
     var jidla = <Jidlo>[];
     var jidelnicek = RegExp(r'(?<=<div class="jidWrapLeft">).+?((fa-clock)|(fa-ban))', dotAll: true).allMatches(res).toList();
     for (var obed in jidelnicek) {
-      // formátování do třídy
-      var o = obed.group(0).toString().replaceAll(RegExp(r'(   )+|([^>a-z]\n)'), '');
-      var objednano = o.contains("Máte objednáno");
-      var lzeObjednat = !(o.contains("nelze zrušit") || o.contains("nelze objednat") || o.contains("nelze změnit"));
-
-      var cenaMatch = RegExp(r'((?<=Cena objednaného jídla">).+?(?=&))').firstMatch(o);
-      cenaMatch ??= RegExp(r'(?<=Cena při objednání jídla:&nbsp;).+?(?=&)').firstMatch(o);
-      cenaMatch ??= RegExp(r'(?<=Cena při objednání jídla">).+?(?=&)').firstMatch(o);
-
-      var cena = double.parse(cenaMatch!.group(0).toString().replaceAll(",", "."));
-      var jidlaProDen = RegExp(r'<div class="jidWrapCenter.+?>(.+?)(?=<\/div>)', dotAll: true)
-          .firstMatch(o)!
-          .group(1)
-          .toString()
-          .replaceAll(' ,', ",")
-          .replaceAll(" <br>", "")
-          .replaceAll("\n", "");
-      var alergenyList = RegExp(r'(<span\s*title=.*?<\/span>)').allMatches(jidlaProDen).toList();
-      var alergeny = alergenyList.map<Alergen>((e) {
-        var jmeno = RegExp(r'<b>(.+?)<\/b>').firstMatch(e.group(1).toString())!.group(1);
-        var popis = RegExp(r'<\/b> - (.+)').firstMatch(e.group(1).toString())?.group(1);
-        var kod = RegExp(r'class="textGrey">(\d+?),?\s?').firstMatch(e.group(1).toString())?.group(1);
-        return Alergen(nazev: jmeno!, kod: kod == null ? null : int.parse(kod), popis: popis);
-      }).toList();
-
-      var vydejna = RegExp(r'(?<=<span class="smallBoldTitle button-link-align">).+?(?=<)').firstMatch(o)!.group(0).toString();
-
-      String? orderUrl;
-      String? burzaUrl;
-      if (lzeObjednat) {
-        // pokud lze objednat, nastavíme adresu pro objednání
-        var match = RegExp(r"(?<=ajaxOrder\(this, ').+?(?=')").firstMatch(o);
-        if (match != null) {
-          orderUrl = match.group(0)!.replaceAll("amp;", "");
-        }
-      } else {
-        // jinak nastavíme URL pro burzu
-        var match = RegExp(r"""db\/dbProcessOrder\.jsp.+?type=((plusburza)|(minusburza)|(multiburza)).+?(?=')""").firstMatch(o);
-        if (match != null) {
-          burzaUrl = match.group(0)!.replaceAll("amp;", "");
-        }
-      }
-      var jidloJmeno = jidlaProDen.split('<sub>')[0];
-      jidloJmeno = cleanString(jidloJmeno);
-      jidla.add(
-        Jidlo(
-          nazev: jidloJmeno.replaceAll(r' (?=[^a-zA-ZěščřžýáíéĚŠČŘŽÝÁÍÉŤŇťň])', ''),
-          objednano: objednano,
-          varianta: vydejna,
-          lzeObjednat: lzeObjednat,
-          cena: cena,
-          orderUrl: orderUrl,
-          den: obedDen,
-          burzaUrl: burzaUrl,
-          naBurze: (burzaUrl == null) ? false : burzaUrl.contains("minusburza"),
-          alergeny: alergeny,
-          kategorizovano: parseJidlo(jidloJmeno),
-        ),
-      );
-      // KONEC formátování do třídy
+      jidla.add(_parsePrihlasenyJidlo(obed));
     }
 
-    return Jidelnicek(obedDen, jidla);
+    return Jidelnicek(den, jidla);
   }
 
   /// Objedná vybrané jídlo
