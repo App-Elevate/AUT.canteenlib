@@ -107,7 +107,7 @@
       - podrobnosti ✅
       - název ✅
     - rozdělení na kategorie ✅
-- Jídelníček pro měsíc ❌
+- Jídelníček pro měsíc ✅
 - Objednávání
   - funguje objednávání ✅
   - funguje zrušení ✅
