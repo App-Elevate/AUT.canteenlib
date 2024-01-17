@@ -7,6 +7,7 @@ import 'package:dotenv/dotenv.dart';
 DotEnv? envSecrets;
 Canteen? canteenInstance;
 Jidelnicek? jidelnicek;
+Jidelnicek? jidelnicekMesic;
 Uzivatel? uzivatel;
 Future<void> ziskatUzivatele() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
@@ -19,6 +20,12 @@ Future<void> ziskatJidelnicek() async {
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
   DateTime funkcniDatum = DateTime(2023, 11, 22);
   jidelnicek ??= await canteenInstance!.jidelnicekDen(den: funkcniDatum);
+}
+
+Future<void> ziskatJidelnicekMesic() async {
+  envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
+  canteenInstance ??= Canteen(envSecrets!["URL"]!);
+  jidelnicek ??= (await canteenInstance!.jidelnicekMesic())[0];
 }
 
 Future<bool> prihlasitSe() async {
@@ -83,6 +90,63 @@ void main() {
       test('Jídelníček má alergeny', () async {
         await prihlasitSe();
         await ziskatJidelnicek();
+        if (canteenInstance!.missingFeatures.contains(Features.alergeny)) {
+          expect(true, true);
+          return;
+        }
+        expect(jidelnicek!.jidla[0].alergeny.isNotEmpty, true);
+      });
+    });
+
+    group('Jídelníček měsíc:', () {
+      if ((canteenInstance?.missingFeatures ?? List<Features>.empty()).contains(Features.jidelnicekMesic)) return;
+      test('Jídelníček není prázdný', () async {
+        await prihlasitSe();
+        await ziskatJidelnicekMesic();
+        expect(jidelnicek!.jidla.isNotEmpty, true);
+      });
+
+      test('Jídelníček má aspoň dva obědy', () async {
+        await prihlasitSe();
+        await ziskatJidelnicekMesic();
+        expect(jidelnicek!.jidla.length >= 2, true);
+      });
+
+      test('Jídelníček má název', () async {
+        await prihlasitSe();
+        await ziskatJidelnicekMesic();
+        print(jidelnicek!.jidla[0].nazev);
+        expect(jidelnicek!.jidla[0].nazev.isNotEmpty, true);
+      });
+
+      test('Jídelníček má cenu', () async {
+        await prihlasitSe();
+        await ziskatJidelnicekMesic();
+        expect(jidelnicek!.jidla[0].cena! > 10, true);
+      });
+
+      test('Jídelníček má variantu', () async {
+        await prihlasitSe();
+        await ziskatJidelnicekMesic();
+        expect(jidelnicek!.jidla[0].varianta.isNotEmpty, true);
+      });
+
+      test('Jídelníček je kategorizovaný', () async {
+        await prihlasitSe();
+        await ziskatJidelnicekMesic();
+        print('--------------------Jídelníček--------------------');
+        print('Jídlo: ${jidelnicek!.jidla[0].nazev}');
+        print('Hlavní jídlo: ${jidelnicek!.jidla[0].kategorizovano!.hlavniJidlo}');
+        print('pití: ${jidelnicek!.jidla[0].kategorizovano!.piti}');
+        print('polévka: ${jidelnicek!.jidla[0].kategorizovano!.polevka}');
+        print('Salátový bar: ${jidelnicek!.jidla[0].kategorizovano!.salatovyBar}');
+        print('ostatní: ${jidelnicek!.jidla[0].kategorizovano!.ostatni}');
+        print('--------------------------------------------------');
+        expect(jidelnicek!.jidla[0].kategorizovano!.hlavniJidlo!.isNotEmpty, true);
+      });
+      test('Jídelníček má alergeny', () async {
+        await prihlasitSe();
+        await ziskatJidelnicekMesic();
         if (canteenInstance!.missingFeatures.contains(Features.alergeny)) {
           expect(true, true);
           return;
