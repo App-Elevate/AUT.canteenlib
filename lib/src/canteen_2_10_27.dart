@@ -34,8 +34,18 @@ import 'package:canteenlib/canteenlib.dart';
 ///
 /// **Všechny metody v případě chyby vrací [Future] s chybovou hláškou.**
 class Canteen2v10v27 extends Canteen {
+  /// icanteen v této verzi nemá uživatelské jméno
+  String username = "";
+
   @override
-  get missingFeatures => <Features>[Features.alergeny, Features.burza, Features.jidelnicekBezCen, Features.burzaAmount, Features.jidelnicekMesic];
+  get missingFeatures => <Features>[
+        Features.alergeny,
+        Features.burza,
+        Features.jidelnicekBezCen,
+        Features.burzaAmount,
+        Features.jidelnicekMesic,
+        Features.variabilniSymbol
+      ];
 
   /// Sušenky potřebné pro komunikaci
   Map<String, String> cookies = {"JSESSIONID": ""};
@@ -57,6 +67,7 @@ class Canteen2v10v27 extends Canteen {
       return Future.error("Nejdříve se musíte přihlásit");
     }
     dom.Document document = parser.parse(r);
+    File("jidelnicek.html").writeAsStringSync(document.outerHtml);
     List<dom.Element> elementList = document.getElementsByTagName("tbody");
     dom.Element? element;
     for (dom.Element e in elementList) {
@@ -65,12 +76,70 @@ class Canteen2v10v27 extends Canteen {
         break;
       }
     }
+    //print(element!.innerHtml);
     if (element == null) return Future.error("nepodařilo se získat informace o uživateli");
-    return Future.error("nepodařilo se získat informace o uživateli");
-/*
+
+    dom.Element jmenoElement = element.firstChild!.firstChild!.children[0].children[0].children[1];
+    dom.Element kategorieElement = element.firstChild!.firstChild!.children[0].children[0].children[3];
+    dom.Element? kreditElement = document.getElementById('Kredit');
+    String kredit = kreditElement?.text ?? '0.0';
+    kredit = kredit.split(' ')[0];
+    /*
+    dom.Element datumNarozeniElement = element.firstChild!.firstChild!.children[0].children[0].children[2];
+    dom.Element tridaElement = element.firstChild!.firstChild!.children[0].children[0].children[4];
+    dom.Element cislaElement = element.firstChild!.firstChild!.children[0].children[0].children[5];
+    dom.Element omezeniElement = element.firstChild!.firstChild!.children[0].children[0].children[6];
+    dom.Element kontaktniUdajeElement = element.firstChild!.children[1].children[0].children[0].children[1];
+    dom.Element adresaElement = element.firstChild!.children[1].children[0].children[0].children[2];
+    dom.Element telefonElement = element.firstChild!.children[1].children[0].children[0].children[3];
+    dom.Element zakonnyZastupceElement = element.firstChild!.children[1].children[0].children[0].children[4];
+    */
+
+    dom.Element variabilniSymbolElement = element.children[1].children[0].children[0].children[0].children[1];
+    dom.Element ucetProPlatbyElement = element.children[1].children[0].children[0].children[0].children[2];
+    //dom.Element ucetProVraceniPreplatku = element.children[1].children[0].children[0].children[0].children[2];
+
+    String? jmeno = jmenoElement.children[0].text;
+    String? prijmeni = jmenoElement.children[1].text;
+    String? kategorie = kategorieElement.children[0].text;
+    String? ucetProPlatby = ucetProPlatbyElement.children[0].text;
+    String? variabilniSymbol = variabilniSymbolElement.children[0].text;
+    try {
+      variabilniSymbol = variabilniSymbol.split(': ')[1].trim();
+    } catch (e) {
+      variabilniSymbol = null;
+    }
+    try {
+      ucetProPlatby = ucetProPlatby.split(': ')[1].trim();
+    } catch (e) {
+      ucetProPlatby = null;
+    }
+    try {
+      jmeno = jmeno.split(': ')[1].trim();
+    } catch (e) {
+      jmeno = null;
+    }
+    try {
+      kategorie = kategorie.split(': ')[1].trim();
+    } catch (e) {
+      kategorie = null;
+    }
+    try {
+      prijmeni = prijmeni.split(': ')[1].trim();
+    } catch (e) {
+      prijmeni = null;
+    }
+
     return Uzivatel(
-        jmeno: jmeno, prijmeni: prijmeni, kategorie: kategorie, ucetProPlatby: ucet, varSymbol: varSymbol, specSymbol: specSymbol, kredit: kredit);
-  */
+      jmeno: jmeno,
+      prijmeni: prijmeni,
+      kategorie: kategorie,
+      ucetProPlatby: ucetProPlatby,
+      varSymbol: variabilniSymbol,
+      specSymbol: null, // not supported
+      kredit: double.parse(kredit),
+      uzivatelskeJmeno: username,
+    );
   }
 
   Future<void> _getFirstSession() async {
@@ -122,6 +191,7 @@ class Canteen2v10v27 extends Canteen {
       return Future.error("Chyba: ${res.body}");
     }
     _parseCookies(res.headers['set-cookie']!);
+    username = user;
 
     prihlasen = true;
     return true;

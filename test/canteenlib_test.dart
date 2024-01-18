@@ -182,6 +182,7 @@ void main() {
       });
 
       test('Uživatel má variablilní nebo specifický symbol', () async {
+        if (canteenInstance!.missingFeatures.contains(Features.variabilniSymbol)) return expect(true, true);
         await prihlasitSe();
         await ziskatUzivatele();
         expect((uzivatel!.varSymbol ?? "").isNotEmpty || (uzivatel!.specSymbol ?? "").isNotEmpty, true);

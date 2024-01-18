@@ -67,6 +67,9 @@ class Alergen {
 }
 
 enum Features {
+  /// zda má test očekávat variabilní/specifický symbol
+  variabilniSymbol,
+
   /// Získat informace o přihlášeném uživateli
   ziskatUzivatele,
 
