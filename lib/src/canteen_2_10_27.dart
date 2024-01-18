@@ -34,6 +34,9 @@ import 'package:canteenlib/canteenlib.dart';
 ///
 /// **Všechny metody v případě chyby vrací [Future] s chybovou hláškou.**
 class Canteen2v10v27 extends Canteen {
+  @override
+  get missingFeatures => <Features>[Features.alergeny, Features.burza, Features.jidelnicekBezCen, Features.burzaAmount, Features.jidelnicekMesic];
+
   /// Sušenky potřebné pro komunikaci
   Map<String, String> cookies = {"JSESSIONID": ""};
 
@@ -47,31 +50,27 @@ class Canteen2v10v27 extends Canteen {
   @override
   Future<Uzivatel> ziskejUzivatele() async {
     if (!prihlasen) return Future.error("Nejdříve se musíte přihlásit");
-    var r = await _getRequest("/web/setting");
+    var r = await _getRequest("/faces/secured/setting.jsp?terminal=false&keyboard=false&printer=false");
+    File("jidelnicek.html").writeAsStringSync(r);
     if (r.contains("přihlášení uživatele")) {
       prihlasen = false;
       return Future.error("Nejdříve se musíte přihlásit");
     }
-    var kreditMatch = double.tryParse(
-        RegExp(r' +<span id="Kredit" .+?>(.+?)(?=&)').firstMatch(r)!.group(1)!.replaceAll(",", ".").replaceAll(RegExp(r"[^\w.-]"), ""));
-    var jmenoMatch = RegExp(r'(?<=jméno: <b>).+?(?=<\/b)').firstMatch(r);
-    var prijmeniMatch = RegExp(r'(?<=příjmení: <b>).+?(?=<\/b)').firstMatch(r);
-    var kategorieMatch = RegExp(r'(?<=kategorie: <b>).+?(?=<\/b)').firstMatch(r);
-    var ucetMatch =
-        RegExp(r'účet pro platby do jídelny:\s*<b>(\d+/\d+)</b>').firstMatch(r)?.group(1)?.replaceAll(RegExp(r'<\/?b>'), ''); //odstranit html tag <b>
-    var varMatch = RegExp(r'(?<=variabilní symbol: <b>).+?(?=<\/b)').firstMatch(r);
-    var specMatch = RegExp(r'(?<=specifický symbol: <b>).+?(?=<\/b)').firstMatch(r);
-
-    var jmeno = jmenoMatch?.group(0) ?? "";
-    var prijmeni = prijmeniMatch?.group(0) ?? "";
-    var kategorie = kategorieMatch?.group(0) ?? "";
-    var ucet = ucetMatch ?? "";
-    var varSymbol = varMatch?.group(0) ?? "";
-    var specSymbol = specMatch?.group(0) ?? "";
-    var kredit = kreditMatch ?? 0.0;
-
+    dom.Document document = parser.parse(r);
+    List<dom.Element> elementList = document.getElementsByTagName("tbody");
+    dom.Element? element;
+    for (dom.Element e in elementList) {
+      if (e.text.contains('Datum narození')) {
+        element = e;
+        break;
+      }
+    }
+    if (element == null) return Future.error("nepodařilo se získat informace o uživateli");
+    return Future.error("nepodařilo se získat informace o uživateli");
+/*
     return Uzivatel(
         jmeno: jmeno, prijmeni: prijmeni, kategorie: kategorie, ucetProPlatby: ucet, varSymbol: varSymbol, specSymbol: specSymbol, kredit: kredit);
+  */
   }
 
   Future<void> _getFirstSession() async {
@@ -136,6 +135,7 @@ class Canteen2v10v27 extends Canteen {
     });
 
     if (r.statusCode != 200 || r.body.contains("fail") || r.body.contains("Chyba")) {
+      File("jidelnicek.html").writeAsStringSync(r.body);
       return Future.error("Chyba: ${r.body}");
     }
 
@@ -159,7 +159,7 @@ class Canteen2v10v27 extends Canteen {
   /// __Lze použít bez přihlášení__
   @override
   Future<List<Jidelnicek>> ziskejJidelnicek() async {
-    return []; //tato verze nemá jídelníček bez cen
+    return Future.error('nepodporovaná funkce'); //tato verze nemá jídelníček bez cen
   }
 
   /// Získá jídlo pro daný den
@@ -187,7 +187,6 @@ class Canteen2v10v27 extends Canteen {
       return Future.error(e);
     }
     //save response to file
-    File("jidelnicek.html").writeAsStringSync(res);
     dom.Document document = parser.parse(res);
     late dom.Element jidelnicekData;
     try {
@@ -203,13 +202,11 @@ class Canteen2v10v27 extends Canteen {
       String nazev = cleanString(obed.children[0].children[1].text);
       dom.Element tlacitko = obed.children[0].children[0].children[0];
       String objednavaciUrl = RegExp(r"'(.*?)'").firstMatch(tlacitko.attributes["onclick"]!.trim())!.group(1)!;
-      print(objednavaciUrl);
       String textNaTlacitku = tlacitko.children[0].text.toLowerCase();
       String varianta = tlacitko.children[1].text.toLowerCase();
       double cena = double.parse(tlacitko.children[3].text.toLowerCase().replaceAll('kč', '').trim());
       bool objednano = textNaTlacitku.contains("zrušit");
       bool lzeObjednat = !textNaTlacitku.contains("nelze");
-      print(objednano);
       jidla.add(
         Jidlo(
           nazev: nazev,
