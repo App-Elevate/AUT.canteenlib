@@ -145,8 +145,16 @@ class Uzivatel {
   /// Aktuální stav kreditu
   double kredit;
 
-  Uzivatel(
-      {this.uzivatelskeJmeno, this.jmeno, this.prijmeni, this.kategorie, this.ucetProPlatby, this.varSymbol, this.kredit = 0.0, this.specSymbol});
+  Uzivatel({
+    this.uzivatelskeJmeno,
+    this.jmeno,
+    this.prijmeni,
+    this.kategorie,
+    this.ucetProPlatby,
+    this.varSymbol,
+    this.kredit = 0.0,
+    this.specSymbol,
+  });
 }
 
 class LoginData {
