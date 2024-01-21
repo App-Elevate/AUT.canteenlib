@@ -119,7 +119,10 @@ class Jidelnicek {
 
   /// Seznam jídel
   List<Jidlo> jidla;
-  Jidelnicek(this.den, this.jidla);
+
+  // Seznam výdejen (je prázdný, pokud je pouze jedna)
+  Map<int, String> vydejny;
+  Jidelnicek(this.den, this.jidla, {this.vydejny = const {}});
 }
 
 /// Reprezentuje informace o přihlášeném uživateli

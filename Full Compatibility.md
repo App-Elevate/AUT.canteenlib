@@ -44,7 +44,7 @@
   - vložení jídla na burzu
   - zrušit vložení jídla na burzu
   - počet
-- Terminal (jiné lokace)
+- Výdejny (jiné lokace)
 
 # Spš a G Na Třebešíně - verze 2.18.03
 
@@ -82,6 +82,7 @@
   - vložení jídla na burzu ✅
   - zrušit vložení jídla na burzu ✅
   - počet ➖
+- Výdejny (jiné lokace) ➖
 
 # Základní škola Ostrava, Matiční 5
 
@@ -119,6 +120,7 @@
   - vložení jídla na burzu ✅
   - zrušit vložení jídla na burzu ✅
   - počet ➖
+- Výdejny (jiné lokace) ➖
 
 # SOŠ stavební a SOU stavební Kolín
 
@@ -156,4 +158,4 @@
   - Objednávání z burzy➖
   - vložení jídla na burzu➖
   - zrušit vložení jídla na burzu➖
-- Terminal (jiné lokace)❌
+- Výdejny (jiné lokace) ✅

@@ -36,6 +36,10 @@ import 'package:canteenlib/canteenlib.dart';
 class Canteen2v10v27 extends Canteen {
   /// icanteen v této verzi nemá uživatelské jméno
   String username = "";
+  @override
+  int vydejna = 1;
+
+  bool firstRequest = false;
 
   @override
   get missingFeatures => <Features>[
@@ -59,15 +63,14 @@ class Canteen2v10v27 extends Canteen {
   /// Vrátí informace o uživateli ve formě instance [Uzivatel]
   @override
   Future<Uzivatel> ziskejUzivatele() async {
+    firstRequest = false;
     if (!prihlasen) return Future.error("Nejdříve se musíte přihlásit");
     var r = await _getRequest("/faces/secured/setting.jsp?terminal=false&keyboard=false&printer=false");
-    File("jidelnicek.html").writeAsStringSync(r);
     if (r.contains("přihlášení uživatele")) {
       prihlasen = false;
       return Future.error("Nejdříve se musíte přihlásit");
     }
     dom.Document document = parser.parse(r);
-    File("jidelnicek.html").writeAsStringSync(document.outerHtml);
     List<dom.Element> elementList = document.getElementsByTagName("tbody");
     dom.Element? element;
     for (dom.Element e in elementList) {
@@ -205,7 +208,6 @@ class Canteen2v10v27 extends Canteen {
     });
 
     if (r.statusCode != 200 || r.body.contains("fail") || r.body.contains("Chyba")) {
-      File("jidelnicek.html").writeAsStringSync(r.body);
       return Future.error("Chyba: ${r.body}");
     }
 
@@ -243,6 +245,11 @@ class Canteen2v10v27 extends Canteen {
   /// - [Jidelnicek] obsahující detaily, které vidí přihlášený uživatel
   @override
   Future<Jidelnicek> jidelnicekDen({DateTime? den}) async {
+    if (!firstRequest && den != null) {
+      DateTime den = DateTime.now();
+      await _getRequest(
+          "/faces/secured/main.jsp?day=${den.year}-${(den.month < 10) ? "0${den.month}" : den.month}-${(den.day < 10) ? "0${den.day}" : den.day}&terminal=false&printer=false&keyboard=false");
+    }
     if (!prihlasen) {
       return Future.error("Nejdříve se musíte přihlásit");
     }
@@ -252,12 +259,23 @@ class Canteen2v10v27 extends Canteen {
     String res;
     try {
       res = await _getRequest(
-          "/faces/secured/main.jsp?day=${den.year}-${(den.month < 10) ? "0${den.month}" : den.month}-${(den.day < 10) ? "0${den.day}" : den.day}&terminal=false&printer=false&keyboard=false");
+          "/faces/secured/main.jsp?vydejna=$vydejna&day=${den.year}-${(den.month < 10) ? "0${den.month}" : den.month}-${(den.day < 10) ? "0${den.day}" : den.day}&terminal=false&printer=false&keyboard=false");
     } catch (e) {
       return Future.error(e);
     }
+    File('jidelnicek.html').writeAsStringSync(res); //debug
     //save response to file
     dom.Document document = parser.parse(res);
+
+    RegExp regex = RegExp(
+        r'''onclick="javascript:location\.replace\('main\.jsp\?vydejna=(\d*)&amp;terminal=false&amp;keyboard=false&amp;printer=false'\);\"\/>\s*(.*)\<\/a\>''');
+
+    Map<int, String> vydejny = {};
+    Iterable<RegExpMatch> regExpMatch = regex.allMatches(res);
+    for (RegExpMatch match in regExpMatch) {
+      vydejny[int.parse(match.group(1)!)] = match.group(2)!;
+    }
+
     late dom.Element jidelnicekData;
     try {
       jidelnicekData = document.getElementsByClassName("orderContent")[0];
@@ -269,33 +287,37 @@ class Canteen2v10v27 extends Canteen {
 
     for (dom.Element obed in jidelnicekData.children[0].children) {
       // formátování do třídy
-      String nazev = cleanString(obed.children[0].children[1].text);
-      dom.Element tlacitko = obed.children[0].children[0].children[0];
-      String objednavaciUrl = RegExp(r"'(.*?)'").firstMatch(tlacitko.attributes["onclick"]!.trim())!.group(1)!;
-      String textNaTlacitku = tlacitko.children[0].text.toLowerCase();
-      String varianta = tlacitko.children[1].text.toLowerCase();
-      double cena = double.parse(tlacitko.children[3].text.toLowerCase().replaceAll('kč', '').trim());
-      bool objednano = textNaTlacitku.contains("zrušit");
-      bool lzeObjednat = !textNaTlacitku.contains("nelze");
-      jidla.add(
-        Jidlo(
-          nazev: nazev,
-          objednano: objednano,
-          varianta: varianta,
-          lzeObjednat: lzeObjednat,
-          cena: cena,
-          orderUrl: objednavaciUrl,
-          den: den,
-          burzaUrl: null, //verze 2.10 nemá burzu
-          naBurze: false, //verze 2.10 nemá burzu
-          alergeny: <Alergen>[],
-          kategorizovano: parseJidlo(nazev),
-        ),
-      );
-      // KONEC formátování do třídy
+      try {
+        String nazev = cleanString(obed.children[0].children[1].text);
+        dom.Element tlacitko = obed.children[0].children[0].children[0];
+        String objednavaciUrl = RegExp(r"'(.*?)'").firstMatch(tlacitko.attributes["onclick"]!.trim())!.group(1)!;
+        String textNaTlacitku = tlacitko.children[0].text.toLowerCase();
+        String varianta = tlacitko.children[1].text.toLowerCase();
+        double cena = double.parse(tlacitko.children[3].text.toLowerCase().replaceAll('kč', '').trim());
+        bool objednano = textNaTlacitku.contains("zrušit");
+        bool lzeObjednat = !textNaTlacitku.contains("nelze");
+        jidla.add(
+          Jidlo(
+            nazev: nazev,
+            objednano: objednano,
+            varianta: varianta,
+            lzeObjednat: lzeObjednat,
+            cena: cena,
+            orderUrl: objednavaciUrl,
+            den: den,
+            burzaUrl: null, //verze 2.10 nemá burzu
+            naBurze: false, //verze 2.10 nemá burzu
+            alergeny: <Alergen>[],
+            kategorizovano: parseJidlo(nazev),
+          ),
+          // KONEC formátování do třídy
+        );
+      } catch (e) {
+        // jídlo chybí = není v nabídce v daný den
+      }
     }
 
-    return Jidelnicek(den, jidla);
+    return Jidelnicek(den, jidla, vydejny: vydejny);
   }
 
   /// Objedná vybrané jídlo

@@ -46,6 +46,13 @@ class Canteen {
   // Je uživatel přihlášen?
   bool get prihlasen => canteenInstance?.prihlasen ?? false;
 
+  int get vydejna => canteenInstance?.vydejna ?? 1;
+  set vydejna(int value) {
+    if (canteenInstance != null) {
+      canteenInstance!.vydejna = value;
+    }
+  }
+
   ///zpracuje jídlo a rozdělí ho na kategorie (hlavní jídlo, polévka, salátový bar, pití...)
   JidloKategorizovano parseJidlo(String jidlo) {
     List<String> cistyListJidel = jidlo.split(',');
