@@ -67,6 +67,8 @@ class Alergen {
 }
 
 enum Features {
+  viceVydejen,
+
   /// zda má test očekávat variabilní/specifický symbol
   variabilniSymbol,
 
