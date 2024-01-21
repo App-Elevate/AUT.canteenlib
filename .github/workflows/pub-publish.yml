@@ -48,14 +48,14 @@ jobs:
         run: dart analyze --fatal-infos
 
       # Testing pro jidelna.trebesin.cz
-      - name: Credentials pro jidelna.trebesin.cz
-        run: |
-          echo "URL= 'jidelna.trebesin.cz'" > .env
-          echo "USER= '${{ secrets.USER1 }}'" >> .env
-          echo "PASS= '${{ secrets.PASS1 }}'" >> .env
-
-      - name: test pro jidelna.trebesin.cz
-        run: dart test
+      #- name: Credentials pro jidelna.trebesin.cz
+      #  run: |
+      #    echo "URL= 'jidelna.trebesin.cz'" > .env
+      #    echo "USER= '${{ secrets.USER1 }}'" >> .env
+      #    echo "PASS= '${{ secrets.PASS1 }}'" >> .env
+      #
+      #- name: test pro jidelna.trebesin.cz
+      #  run: dart test
 
       # Testing pro obedy.zs-mat5.cz
       - name: Credentials pro obedy.zs-mat5.cz
