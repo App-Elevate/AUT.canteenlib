@@ -1,8 +1,11 @@
 # V tomto souboru je rozepsaná každá featura pro každou instituci. Je to takový to-do list
 
 ➖ - v instituci není featura potřeba nebo není v dané verzi icanteen
+
 ✅ - featura funguje
+
 ❌ - featura nefunguje
+
 ❓ - featura funguje částečně nebo nelze vyzkoušet
 
 # Feature set
@@ -68,7 +71,7 @@
     - lze objednat ✅
     - na burze ✅
     - alergeny ✅
-      - kódy ❌ - není dostupné na této verzi icanteen
+      - kódy ➖ - není dostupné na této verzi icanteen
       - podrobnosti ✅
       - název ✅
     - rozdělení na kategorie ✅
@@ -125,15 +128,15 @@
 # SOŠ stavební a SOU stavební Kolín
 
 - Login ✅
-- Získej uživatele ❌
-  - kredit ❌
-  - jméno ❌
-  - Příjmení ❌
-  - Kategorie ❌
-  - Účet pro platby ❌
-  - Variabilní symbol ❌
-  - specifický symbol ❌
-  - Uživatelské jméno ❌
+- Získej uživatele ✅
+  - kredit ✅
+  - jméno ✅
+  - Příjmení ✅
+  - Kategorie ✅
+  - Účet pro platby ✅
+  - Variabilní symbol ✅
+  - specifický symbol ➖
+  - Uživatelské jméno ✅
 - Jídelníček pro den ✅
   - správný počet jídel ✅
   - jídlo ✅

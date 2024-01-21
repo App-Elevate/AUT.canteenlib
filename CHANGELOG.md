@@ -1,3 +1,7 @@
+## 3.1.0
+
+- Přidána podpora pro `
+
 ## 3.0.6
 
 - Fix pro kategorizaci
