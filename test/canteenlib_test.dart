@@ -25,13 +25,7 @@ Future<void> ziskatJidelnicek() async {
 Future<void> ziskatJidelnicekMesic() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
-  List<Jidelnicek> jidelnickyProMesic = await canteenInstance!.jidelnicekMesic();
-  for (Jidelnicek jidelnicek in jidelnickyProMesic) {
-    if (jidelnicek.jidla.isNotEmpty) {
-      jidelnicekMesic = jidelnicek;
-      break;
-    }
-  }
+  jidelnicekMesic ??= (await canteenInstance!.jidelnicekMesic())[0];
 }
 
 Future<bool> prihlasitSe() async {
