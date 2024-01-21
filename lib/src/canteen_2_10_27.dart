@@ -263,7 +263,6 @@ class Canteen2v10v27 extends Canteen {
     } catch (e) {
       return Future.error(e);
     }
-    File('jidelnicek.html').writeAsStringSync(res); //debug
     //save response to file
     dom.Document document = parser.parse(res);
 
