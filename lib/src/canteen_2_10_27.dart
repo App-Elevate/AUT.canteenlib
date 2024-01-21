@@ -25,8 +25,6 @@ SOFTWARE.
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:canteenlib/canteenlib.dart';
 
