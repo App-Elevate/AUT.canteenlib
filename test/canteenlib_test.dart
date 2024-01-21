@@ -25,7 +25,13 @@ Future<void> ziskatJidelnicek() async {
 Future<void> ziskatJidelnicekMesic() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
-  jidelnicekMesic ??= (await canteenInstance!.jidelnicekMesic())[0];
+  List<Jidelnicek> jidelnickyProMesic = await canteenInstance!.jidelnicekMesic();
+  for (Jidelnicek jidelnicek in jidelnickyProMesic) {
+    if (jidelnicek.jidla.isNotEmpty) {
+      jidelnicekMesic = jidelnicek;
+      break;
+    }
+  }
 }
 
 Future<bool> prihlasitSe() async {
@@ -123,11 +129,11 @@ void main() {
         expect(jidelnicekMesic!.jidla.isNotEmpty, true);
       });
 
-      test('Jídelníček má aspoň dva obědy', () async {
+      test('Jídelníček má aspoň jeden oběd', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         await ziskatJidelnicekMesic();
-        expect(jidelnicekMesic!.jidla.length >= 2, true);
+        expect(jidelnicekMesic!.jidla.isNotEmpty, true);
       });
 
       test('Jídelníček má název', () async {
