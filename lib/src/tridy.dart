@@ -66,6 +66,34 @@ class Alergen {
   const Alergen({required this.nazev, this.kod, this.popis});
 }
 
+enum Features {
+  viceVydejen,
+
+  /// zda má test očekávat variabilní/specifický symbol
+  variabilniSymbol,
+
+  /// Získat informace o přihlášeném uživateli
+  ziskatUzivatele,
+
+  /// Získat informace o jídelníčku zvěřejněném na webu bez nutnosti přihlášení
+  jidelnicekBezCen,
+
+  /// Získat informace o jídelníčku zvěřejněném na webu s nutností přihlášení + objednání obědů
+  jidelnicekDen,
+
+  // Informace o jídelníčku za měsíc
+  jidelnicekMesic,
+
+  /// burza
+  burza,
+
+  // dát počet jídel na burzu
+  burzaAmount,
+
+  /// alergeny
+  alergeny,
+}
+
 /// Reprezentuje cizí jídlo na burze
 class Burza {
   /// Den, který je jídlo vydáváno
@@ -93,7 +121,10 @@ class Jidelnicek {
 
   /// Seznam jídel
   List<Jidlo> jidla;
-  Jidelnicek(this.den, this.jidla);
+
+  // Seznam výdejen (je prázdný, pokud je pouze jedna)
+  Map<int, String> vydejny;
+  Jidelnicek(this.den, this.jidla, {this.vydejny = const {}});
 }
 
 /// Reprezentuje informace o přihlášeném uživateli
@@ -122,8 +153,16 @@ class Uzivatel {
   /// Aktuální stav kreditu
   double kredit;
 
-  Uzivatel(
-      {this.uzivatelskeJmeno, this.jmeno, this.prijmeni, this.kategorie, this.ucetProPlatby, this.varSymbol, this.kredit = 0.0, this.specSymbol});
+  Uzivatel({
+    this.uzivatelskeJmeno,
+    this.jmeno,
+    this.prijmeni,
+    this.kategorie,
+    this.ucetProPlatby,
+    this.varSymbol,
+    this.kredit = 0.0,
+    this.specSymbol,
+  });
 }
 
 class LoginData {

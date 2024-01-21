@@ -51,3 +51,13 @@ jobs:
 
       - name: Test pro obedy.zs-mat5.cz
         run: dart test
+
+      # Testing pro obedy.ss-stavebnikolin.cz
+      - name: Credentials pro obedy.ss-stavebnikolin.cz
+        run: |
+          echo "URL= 'obedy.ss-stavebnikolin.cz'" > .env
+          echo "USER= '${{ secrets.USER3 }}'" >> .env
+          echo "PASS= '${{ secrets.PASS3 }}'" >> .env
+
+      - name: Test pro obedy.ss-stavebnikolin.cz
+        run: dart test

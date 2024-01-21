@@ -29,6 +29,9 @@ import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 
 class Canteen {
+  /// Seznam chybějících funkcí pro danou verzi iCanteenu - funkce, které nejsou ve vanilla webové verzi iCanteenu nebo nejsou podporovány
+  List<Features> missingFeatures = [];
+
   /// URL iCanteenu
   String url;
 
@@ -42,6 +45,13 @@ class Canteen {
 
   // Je uživatel přihlášen?
   bool get prihlasen => canteenInstance?.prihlasen ?? false;
+
+  int get vydejna => canteenInstance?.vydejna ?? 1;
+  set vydejna(int value) {
+    if (canteenInstance != null) {
+      canteenInstance!.vydejna = value;
+    }
+  }
 
   ///zpracuje jídlo a rozdělí ho na kategorie (hlavní jídlo, polévka, salátový bar, pití...)
   JidloKategorizovano parseJidlo(String jidlo) {
@@ -62,25 +72,42 @@ class Canteen {
     List<String> salatoveBary = ['salát', 'kompot'];
     List<String> piticka = [
       'nápoj',
+      'napoj',
       'čaj',
+      'caj',
       'káva',
+      'kava',
+      'mošt',
+      'most',
       'sirup',
       'voda',
       'mléko',
+      'mleko',
       'vit. nápoj' /*vitamínový nápoj*/,
       'vit.nápoj' /*vitamínový nápoj*/,
       'džus',
+      'dzus',
       'kakao',
     ];
     List<String> ostatniVeci = [
       'ovoce',
       'pečivo',
+      'pecivo',
       'chléb',
+      'chleb',
       'rohlík',
+      'rohlik',
       'tyčinka',
+      'tycinka',
       'dezert',
-      'termix'
-          'šáteč' /*šáteček/šátečky */
+      'termix',
+      'tvarohá' /*Tvaroháček/Tvaroháčky*/,
+      'tvaroha' /*tvaroháček/tvaroháčky*/,
+      'šáteč' /*šáteček/šátečky */,
+      'satec' /*šáteček/šátečky */,
+      'šateč',
+      'šatec',
+      'sateč',
     ];
 
     bool kategorie(String vec, List<String> kategorie) {
@@ -214,6 +241,9 @@ class Canteen {
       case '2.19.13':
         canteenInstance = Canteen2v19v13(url);
         break;
+      case '2.10.27':
+        canteenInstance = Canteen2v10v27(url);
+        break;
       default:
         if (loginData == null) {
           //pokud není loginData, tak se nemůže získat verze. Tudíž prostě zkusíme jednu verzi a je možné, že nebude fungovat...
@@ -242,7 +272,15 @@ class Canteen {
                 throw 'Nepodařilo se přihlásit do iCanteenu';
               }
             } catch (e) {
-              rethrow;
+              try {
+                canteenInstance = Canteen2v10v27(url);
+                await canteenInstance!.login(loginData.username, loginData.password);
+                if (!canteenInstance!.prihlasen) {
+                  throw 'Nepodařilo se přihlásit do iCanteenu';
+                }
+              } catch (e) {
+                rethrow;
+              }
             }
           }
         }
@@ -250,6 +288,7 @@ class Canteen {
     if (loginData != null && !canteenInstance!.prihlasen) {
       await canteenInstance!.login(loginData.username, loginData.password);
     }
+    missingFeatures = canteenInstance!.missingFeatures;
     return canteenInstance!;
   }
 
@@ -324,6 +363,10 @@ class Canteen {
     if (canteenInstance != null) {
       return canteenInstance!.ziskejJidelnicek();
     }
+    if (canteenInstance!.missingFeatures.contains(Features.jidelnicekBezCen)) {
+      throw 'nepodporovaná funkce';
+    }
+
     await _ziskatInstanciProVerzi();
     return canteenInstance!.ziskejJidelnicek();
   }
@@ -341,13 +384,35 @@ class Canteen {
     if (canteenInstance == null) {
       throw 'Nejdříve se musíte přihlásit';
     }
+    if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) {
+      throw 'nepodporovaná funkce';
+    }
     return canteenInstance!.jidelnicekDen(den: den);
+  }
+
+  /// Získá jídlo do konce měsíce od aktuálního dne
+  ///
+  /// __Vyžaduje přihlášení pomocí [login]__
+  ///
+  /// Výstup:
+  /// - list instancí [Jidelnicek] obsahující detaily, které vidí přihlášený uživatel
+  Future<List<Jidelnicek>> jidelnicekMesic() async {
+    if (canteenInstance == null) {
+      throw 'Nejdříve se musíte přihlásit';
+    }
+    if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) {
+      throw 'nepodporovaná funkce';
+    }
+    return canteenInstance!.jidelnicekMesic();
   }
 
   /// Vrátí informace o uživateli ve formě instance [Uzivatel]
   Future<Uzivatel> ziskejUzivatele() async {
     if (canteenInstance == null) {
       throw 'Nejdříve se musíte přihlásit';
+    }
+    if (canteenInstance!.missingFeatures.contains(Features.ziskatUzivatele)) {
+      throw 'nepodporovaná funkce';
     }
     return canteenInstance!.ziskejUzivatele();
   }
@@ -377,6 +442,9 @@ class Canteen {
     if (canteenInstance == null) {
       throw 'Nejdříve se musíte přihlásit';
     }
+    if (canteenInstance!.missingFeatures.contains(Features.burza)) {
+      throw 'nepodporovaná funkce';
+    }
     return canteenInstance!.doBurzy(j, amount: amount);
   }
 
@@ -387,6 +455,9 @@ class Canteen {
   Future<List<Burza>> ziskatBurzu() async {
     if (canteenInstance == null) {
       throw 'Nejdříve se musíte přihlásit';
+    }
+    if (canteenInstance!.missingFeatures.contains(Features.burza)) {
+      throw 'nepodporovaná funkce';
     }
     return canteenInstance!.ziskatBurzu();
   }
@@ -401,6 +472,9 @@ class Canteen {
   Future<bool> objednatZBurzy(Burza b) async {
     if (canteenInstance == null) {
       throw 'Nejdříve se musíte přihlásit';
+    }
+    if (canteenInstance!.missingFeatures.contains(Features.burza)) {
+      throw 'nepodporovaná funkce';
     }
     return canteenInstance!.objednatZBurzy(b);
   }
