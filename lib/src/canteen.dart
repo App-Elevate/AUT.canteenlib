@@ -424,7 +424,7 @@ class Canteen {
   ///
   /// Výstup:
   /// - Aktualizovaná instance [Jidlo] tohoto jídla
-  Future<Jidlo> objednat(Jidlo j) async {
+  Future<Jidelnicek> objednat(Jidlo j) async {
     if (canteenInstance == null) {
       throw 'Nejdříve se musíte přihlásit';
     }

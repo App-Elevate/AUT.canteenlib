@@ -20,7 +20,7 @@ void main(List<String> args) async {
 
     // objednání jídla
     var objednano = await canteenInstance.objednat(jidelnicek.jidla[0]);
-    print(objednano.objednano);
+    print(objednano.jidla[0].objednano);
   } catch (e) {
     print("Při získávání informací nastala chyba: $e");
   }

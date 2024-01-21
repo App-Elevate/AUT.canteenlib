@@ -368,7 +368,7 @@ class Canteen2v18v03 extends Canteen {
   /// Výstup:
   /// - Aktualizovaná instance [Jidlo] tohoto jídla
   @override
-  Future<Jidlo> objednat(Jidlo j) async {
+  Future<Jidelnicek> objednat(Jidlo j) async {
     if (!prihlasen) {
       return Future.error("Nejdříve se musíte přihlásit");
     }
@@ -382,13 +382,7 @@ class Canteen2v18v03 extends Canteen {
     } catch (e) {
       return Future.error(e);
     }
-
-    var novy = (await jidelnicekDen(den: j.den))
-        .jidla
-        .where(
-          (element) => element.nazev == j.nazev,
-        )
-        .toList()[0];
+    var novy = await jidelnicekDen(den: j.den);
 
     return novy; // vrátit novou instanci
   }
