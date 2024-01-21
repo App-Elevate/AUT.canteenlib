@@ -25,6 +25,8 @@ SOFTWARE.
 import 'package:http/http.dart' as http;
 import 'package:canteenlib/canteenlib.dart';
 
+import 'canteen_lib_exceptions.dart';
+
 /// Reprezentuje kantýnu verze 2.19.13
 ///
 /// **Všechny metody v případě chyby vrací [Future] s chybovou hláškou.**

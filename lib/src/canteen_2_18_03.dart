@@ -24,6 +24,8 @@ SOFTWARE.
 import 'package:canteenlib/canteenlib.dart';
 import 'package:http/http.dart' as http;
 
+import 'canteen_lib_exceptions.dart';
+
 /*  SUPPORT INFO
 
 Tato verze je testována a podporována na webu jidelna.trebesin.cz.

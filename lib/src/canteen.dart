@@ -23,6 +23,7 @@ SOFTWARE.
 */
 import 'package:canteenlib/canteenlib.dart';
 
+import 'canteen_lib_exceptions.dart';
 import 'canteen_versions.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
