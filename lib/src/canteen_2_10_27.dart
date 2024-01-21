@@ -25,8 +25,6 @@ SOFTWARE.
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:canteenlib/canteenlib.dart';
 
@@ -64,11 +62,12 @@ class Canteen2v10v27 extends Canteen {
   @override
   Future<Uzivatel> ziskejUzivatele() async {
     firstRequest = false;
-    if (!prihlasen) return Future.error("Nejdříve se musíte přihlásit");
-    var r = await _getRequest("/faces/secured/setting.jsp?terminal=false&keyboard=false&printer=false");
-    if (r.contains("přihlášení uživatele")) {
-      prihlasen = false;
-      return Future.error("Nejdříve se musíte přihlásit");
+    if (!prihlasen) return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
+    String r;
+    try {
+      r = await _getRequest("/faces/secured/setting.jsp?terminal=false&keyboard=false&printer=false");
+    } catch (e) {
+      return Future.error(e);
     }
     dom.Document document = parser.parse(r);
     List<dom.Element> elementList = document.getElementsByTagName("tbody");
@@ -80,7 +79,7 @@ class Canteen2v10v27 extends Canteen {
       }
     }
     //print(element!.innerHtml);
-    if (element == null) return Future.error("nepodařilo se získat informace o uživateli");
+    if (element == null) return Future.error("nepodařilo se získat informace o uživateli - HTML PARSING ERROR");
 
     dom.Element jmenoElement = element.firstChild!.firstChild!.children[0].children[0].children[1];
     dom.Element kategorieElement = element.firstChild!.firstChild!.children[0].children[0].children[3];
@@ -146,8 +145,12 @@ class Canteen2v10v27 extends Canteen {
   }
 
   Future<void> _getFirstSession() async {
-    var res = await http.get(Uri.parse('$url/faces/login.jsp'));
-    _parseCookies(res.headers['set-cookie']!);
+    try {
+      var res = await http.get(Uri.parse('$url/faces/login.jsp'));
+      _parseCookies(res.headers['set-cookie']!);
+    } catch (e) {
+      return Future.error(CanteenLibExceptions.chybaSite);
+    }
   }
 
   /// Převede cookie řetězec z požadavku do mapy
@@ -172,19 +175,27 @@ class Canteen2v10v27 extends Canteen {
   @override
   Future<bool> login(String user, String password) async {
     if (cookies["JSESSIONID"] == "") {
-      await _getFirstSession();
+      try {
+        await _getFirstSession();
+      } catch (e) {
+        return Future.error(e);
+      }
     }
-
-    var res = await http.post(Uri.parse("$url/j_spring_security_check"), headers: {
-      "Cookie": "JSESSIONID=${cookies["JSESSIONID"]!};",
-      "Content-Type": "application/x-www-form-urlencoded",
-    }, body: {
-      "j_username": user,
-      "j_password": password,
-      "terminal": "false",
-      "_spring_security_remember_me": "on",
-      "targetUrl": "/faces/secured/main.jsp?terminal=false&status=true&printer=&keyboard="
-    });
+    http.Response res;
+    try {
+      res = await http.post(Uri.parse("$url/j_spring_security_check"), headers: {
+        "Cookie": "JSESSIONID=${cookies["JSESSIONID"]!};",
+        "Content-Type": "application/x-www-form-urlencoded",
+      }, body: {
+        "j_username": user,
+        "j_password": password,
+        "terminal": "false",
+        "_spring_security_remember_me": "on",
+        "targetUrl": "/faces/secured/main.jsp?terminal=false&status=true&printer=&keyboard="
+      });
+    } catch (e) {
+      return Future.error(CanteenLibExceptions.chybaSite);
+    }
 
     if (res.headers['set-cookie']!.contains("remember-me=;")) {
       return false; // špatné heslo
@@ -202,10 +213,15 @@ class Canteen2v10v27 extends Canteen {
 
   /// Builder pro GET request
   Future<String> _getRequest(String path) async {
-    var r = await http.get(Uri.parse(url + path), headers: {
-      "Cookie":
-          "JSESSIONID=${cookies["JSESSIONID"]!}; ${cookies.containsKey("COOKIE") ? "SPRING_SECURITY_REMEMBER_ME_COOKIE=${cookies["COOKIE"]!};" : ""}",
-    });
+    http.Response r;
+    try {
+      r = await http.get(Uri.parse(url + path), headers: {
+        "Cookie":
+            "JSESSIONID=${cookies["JSESSIONID"]!}; ${cookies.containsKey("COOKIE") ? "SPRING_SECURITY_REMEMBER_ME_COOKIE=${cookies["COOKIE"]!};" : ""}",
+      });
+    } catch (e) {
+      return Future.error(CanteenLibExceptions.chybaSite);
+    }
 
     if (r.statusCode != 200 || r.body.contains("fail") || r.body.contains("Chyba")) {
       return Future.error("Chyba: ${r.body}");
@@ -213,7 +229,7 @@ class Canteen2v10v27 extends Canteen {
 
     if (r.body.contains("přihlášení uživatele")) {
       prihlasen = false;
-      return Future.error("Nejdříve se musíte přihlásit");
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
 
     if (r.headers.containsKey("set-cookie")) {
@@ -221,17 +237,6 @@ class Canteen2v10v27 extends Canteen {
     }
 
     return r.body;
-  }
-
-  /// Získá jídelníček bez cen
-  ///
-  /// Výstup:
-  /// - [List] s [Jidelnicek], který neobsahuje ceny
-  ///
-  /// __Lze použít bez přihlášení__
-  @override
-  Future<List<Jidelnicek>> ziskejJidelnicek() async {
-    return Future.error('nepodporovaná funkce'); //tato verze nemá jídelníček bez cen
   }
 
   /// Získá jídlo pro daný den
@@ -245,13 +250,17 @@ class Canteen2v10v27 extends Canteen {
   /// - [Jidelnicek] obsahující detaily, které vidí přihlášený uživatel
   @override
   Future<Jidelnicek> jidelnicekDen({DateTime? den}) async {
+    if (!prihlasen) {
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
+    }
     if (!firstRequest && den != null) {
       DateTime den = DateTime.now();
-      await _getRequest(
-          "/faces/secured/main.jsp?day=${den.year}-${(den.month < 10) ? "0${den.month}" : den.month}-${(den.day < 10) ? "0${den.day}" : den.day}&terminal=false&printer=false&keyboard=false");
-    }
-    if (!prihlasen) {
-      return Future.error("Nejdříve se musíte přihlásit");
+      try {
+        await _getRequest(
+            "/faces/secured/main.jsp?day=${den.year}-${(den.month < 10) ? "0${den.month}" : den.month}-${(den.day < 10) ? "0${den.day}" : den.day}&terminal=false&printer=false&keyboard=false");
+      } catch (e) {
+        return Future.error(e);
+      }
     }
 
     den ??= DateTime.now();
@@ -263,7 +272,6 @@ class Canteen2v10v27 extends Canteen {
     } catch (e) {
       return Future.error(e);
     }
-    File('jidelnicek.html').writeAsStringSync(res); //debug
     //save response to file
     dom.Document document = parser.parse(res);
 
@@ -280,7 +288,7 @@ class Canteen2v10v27 extends Canteen {
     try {
       jidelnicekData = document.getElementsByClassName("orderContent")[0];
     } catch (e) {
-      return Future.error("Obědy nenalezeny");
+      return Future.error("Obědy nenalezeny - HTML PARSING ERROR");
     }
 
     List<Jidlo> jidla = <Jidlo>[];
@@ -330,54 +338,22 @@ class Canteen2v10v27 extends Canteen {
   @override
   Future<Jidelnicek> objednat(Jidlo j) async {
     if (!prihlasen) {
-      return Future.error("Nejdříve se musíte přihlásit");
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
 
     if (!j.lzeObjednat || j.orderUrl == null || j.orderUrl!.isEmpty) {
-      return Future.error("Jídlo nelze objednat nebo nemá adresu pro objednání");
+      return Future.error(CanteenLibExceptions.jidloNelzeObjednat);
     }
 
     try {
       await _getRequest("/faces/secured/${j.orderUrl!}"); // provést operaci
     } catch (e) {
-      return Future.error(e);
+      if (isEnumItem(e, CanteenLibExceptions.values)) {
+        return Future.error(e);
+      }
+      return Future.error(CanteenLibExceptions.chybaObjednani);
     }
 
-    var novy = await jidelnicekDen(den: j.den);
-
-    return novy; // vrátit novou instanci
-  }
-
-  /// Uloží vaše jídlo z/do burzy
-  ///
-  /// Vstup:
-  /// - `j` - Jídlo, které chceme dát/vzít do/z burzy | [Jidlo]
-  ///
-  /// Výstup:
-  /// - Aktualizovaná instance [Jidlo] tohoto jídla NEBO [Future] jako chyba
-  @override
-  Future<Jidlo> doBurzy(Jidlo j, {int amount = 1}) async {
-    return Future.error("Tato verze iCanteenu nemá burzu");
-  }
-
-  /// Získá aktuální jídla v burze
-  ///
-  /// Výstup:
-  /// - List instancí [Burza], každá obsahuje informace o jídle v burze
-  @override
-  Future<List<Burza>> ziskatBurzu() async {
-    return Future.error("Tato verze iCanteenu nemá burzu");
-  }
-
-  /// Objedná jídlo z burzy pomocí URL z instance třídy Burza
-  ///
-  /// Vstup:
-  /// - `b` - Jídlo __z burzy__, které chceme objednat | [Burza]
-  ///
-  /// Výstup:
-  /// - [bool], `true`, pokud bylo jídlo úspěšně objednáno z burzy, jinak `Exception`
-  @override
-  Future<bool> objednatZBurzy(Burza b) async {
-    return Future.error("Tato verze iCanteenu nemá burzu");
+    return jidelnicekDen(den: j.den);
   }
 }

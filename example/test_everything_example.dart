@@ -15,18 +15,25 @@ void main(List<String> args) async {
     print('Login Failed - either bad url or no internet');
     return;
   }
+  Uzivatel? uzivatel;
+  try {
+    /// Získání informací o uživateli
+    uzivatel = await canteenInstance.ziskejUzivatele();
+    vytisknoutInfoOUzivateli(uzivatel);
+  } catch (e) {
+    print(e);
+  }
 
-
-
-  /// Získání informací o uživateli
-  Uzivatel uzivatel = await canteenInstance.ziskejUzivatele();
-  vytisknoutInfoOUzivateli(uzivatel);
-
-  /// Získání jídelníčku pro daný den
-  DateTime datum = DateTime.now();
-  datum = datum.add(Duration(days: 2));
-  Jidelnicek jidelnicek = await canteenInstance.jidelnicekDen(den: datum);
-  vytisknoutInfoOJidelnicku(jidelnicek);
+  Jidelnicek? jidelnicek;
+  try {
+    /// Získání jídelníčku pro daný den
+    DateTime datum = DateTime.now();
+    datum = datum.add(Duration(days: 2));
+    jidelnicek = await canteenInstance.jidelnicekDen(den: datum);
+    vytisknoutInfoOJidelnicku(jidelnicek);
+  } catch (e) {
+    print(e);
+  }
   /*
   |------------------------------------------------------------------------------------------------------------------|
   |  Následující funkce objednávají obědy nebo dávají/odebírají jídla z burzy.                                       |
@@ -36,13 +43,13 @@ void main(List<String> args) async {
   */
   try {
     //jidelnicek.jidla[0] = await canteenInstance.objednat(jidelnicek.jidla[0]);
-    vytisknoutInfoOJidelnicku(jidelnicek);
+    vytisknoutInfoOJidelnicku(jidelnicek!);
   } catch (e) {
     print(e);
   }
   try {
     //jidelnicek.jidla[0] = await canteenInstance.doBurzy(jidelnicek.jidla[0]);
-    vytisknoutInfoOJidelnicku(jidelnicek);
+    vytisknoutInfoOJidelnicku(jidelnicek!);
   } catch (e) {
     print(e);
   }

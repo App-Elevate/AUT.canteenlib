@@ -227,10 +227,7 @@ class Canteen {
   }
 
   /// Získá verzi třídy pro verzi icanteenu
-  Future<Canteen> _spravovatelVerzi({LoginData? loginData}) async {
-    if (verze == null) {
-      throw Exception('Nejprve musíte získat verzi iCanteenu');
-    }
+  Future<bool> _spravovatelVerzi({LoginData? loginData}) async {
     switch (verze) {
       case '2.18.03':
         canteenInstance = Canteen2v18v03(url);
@@ -279,7 +276,7 @@ class Canteen {
                   throw 'Nepodařilo se přihlásit do iCanteenu';
                 }
               } catch (e) {
-                rethrow;
+                return Future.error(CanteenLibExceptions.nepodporovanaVerze);
               }
             }
           }
@@ -289,11 +286,11 @@ class Canteen {
       await canteenInstance!.login(loginData.username, loginData.password);
     }
     missingFeatures = canteenInstance!.missingFeatures;
-    return canteenInstance!;
+    return prihlasen;
   }
 
   /// Získá první instanci (případně ji přihlásí) a zjistí verzi
-  Future<Canteen> _ziskatInstanciProVerzi({LoginData? loginData}) async {
+  Future<bool> _ziskatInstanciProVerzi({LoginData? loginData}) async {
     //získání verze
     String webHtml = '';
     RegExp versionPattern = RegExp(r'>iCanteen\s\d+\.\d+\.\d+\s\|');
@@ -319,7 +316,7 @@ class Canteen {
         var res = await http.get(Uri.parse(url));
         webHtml = res.body;
       } catch (e) {
-        throw 'neplatné url';
+        return Future.error(CanteenLibExceptions.neplatneUrl);
       }
     }
     Iterable<Match> matches = versionPattern.allMatches(webHtml);
@@ -333,7 +330,7 @@ class Canteen {
       verze = '0.0.0';
     }
     //vracení správné verze classy:
-    return await _spravovatelVerzi(loginData: loginData);
+    return _spravovatelVerzi(loginData: loginData);
   }
 
   /// Přihlášení do iCanteen
@@ -345,9 +342,9 @@ class Canteen {
   ///
   /// Výstup:
   /// - [bool] ve [Future], v případě přihlášení `true`, v případě špatného hesla `false`
+  /// - [Future] s chybou, pokud se nepodařilo přihlásit z jiného důvodu ([CanteenLibExceptions])
   Future<bool> login(String user, String password) async {
-    await _ziskatInstanciProVerzi(loginData: LoginData(user, password));
-    return prihlasen;
+    return _ziskatInstanciProVerzi(loginData: LoginData(user, password));
   }
 
   /*--------funkce specifické pro verze--------*/
@@ -364,10 +361,13 @@ class Canteen {
       return canteenInstance!.ziskejJidelnicek();
     }
     if (canteenInstance!.missingFeatures.contains(Features.jidelnicekBezCen)) {
-      throw 'nepodporovaná funkce';
+      return Future.error(CanteenLibExceptions.featureNepodporovana);
     }
-
-    await _ziskatInstanciProVerzi();
+    try {
+      await _ziskatInstanciProVerzi();
+    } catch (e) {
+      return Future.error(e);
+    }
     return canteenInstance!.ziskejJidelnicek();
   }
 
@@ -382,10 +382,10 @@ class Canteen {
   /// - [Jidelnicek] obsahující detaily, které vidí přihlášený uživatel
   Future<Jidelnicek> jidelnicekDen({DateTime? den}) async {
     if (canteenInstance == null) {
-      throw 'Nejdříve se musíte přihlásit';
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
     if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) {
-      throw 'nepodporovaná funkce';
+      return Future.error(CanteenLibExceptions.featureNepodporovana);
     }
     return canteenInstance!.jidelnicekDen(den: den);
   }
@@ -398,10 +398,10 @@ class Canteen {
   /// - list instancí [Jidelnicek] obsahující detaily, které vidí přihlášený uživatel
   Future<List<Jidelnicek>> jidelnicekMesic() async {
     if (canteenInstance == null) {
-      throw 'Nejdříve se musíte přihlásit';
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
     if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) {
-      throw 'nepodporovaná funkce';
+      return Future.error(CanteenLibExceptions.featureNepodporovana);
     }
     return canteenInstance!.jidelnicekMesic();
   }
@@ -409,10 +409,10 @@ class Canteen {
   /// Vrátí informace o uživateli ve formě instance [Uzivatel]
   Future<Uzivatel> ziskejUzivatele() async {
     if (canteenInstance == null) {
-      throw 'Nejdříve se musíte přihlásit';
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
     if (canteenInstance!.missingFeatures.contains(Features.ziskatUzivatele)) {
-      throw 'nepodporovaná funkce';
+      return Future.error(CanteenLibExceptions.featureNepodporovana);
     }
     return canteenInstance!.ziskejUzivatele();
   }
@@ -426,7 +426,7 @@ class Canteen {
   /// - Aktualizovaná instance [Jidlo] tohoto jídla
   Future<Jidelnicek> objednat(Jidlo j) async {
     if (canteenInstance == null) {
-      throw 'Nejdříve se musíte přihlásit';
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
     return canteenInstance!.objednat(j);
   }
@@ -438,12 +438,12 @@ class Canteen {
   ///
   /// Výstup:
   /// - Aktualizovaná instance [Jidlo] tohoto jídla NEBO [Future] jako chyba
-  Future<Jidlo> doBurzy(Jidlo j, {int amount = 1}) async {
+  Future<Jidelnicek> doBurzy(Jidlo j, {int amount = 1}) async {
     if (canteenInstance == null) {
-      throw 'Nejdříve se musíte přihlásit';
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
     if (canteenInstance!.missingFeatures.contains(Features.burza)) {
-      throw 'nepodporovaná funkce';
+      return Future.error(CanteenLibExceptions.featureNepodporovana);
     }
     return canteenInstance!.doBurzy(j, amount: amount);
   }
@@ -454,10 +454,10 @@ class Canteen {
   /// - List instancí [Burza], každá obsahuje informace o jídle v burze
   Future<List<Burza>> ziskatBurzu() async {
     if (canteenInstance == null) {
-      throw 'Nejdříve se musíte přihlásit';
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
     if (canteenInstance!.missingFeatures.contains(Features.burza)) {
-      throw 'nepodporovaná funkce';
+      return Future.error(CanteenLibExceptions.featureNepodporovana);
     }
     return canteenInstance!.ziskatBurzu();
   }
@@ -471,10 +471,10 @@ class Canteen {
   /// - [bool], `true`, pokud bylo jídlo úspěšně objednáno z burzy, jinak `Exception`
   Future<bool> objednatZBurzy(Burza b) async {
     if (canteenInstance == null) {
-      throw 'Nejdříve se musíte přihlásit';
+      return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
     if (canteenInstance!.missingFeatures.contains(Features.burza)) {
-      throw 'nepodporovaná funkce';
+      return Future.error(CanteenLibExceptions.featureNepodporovana);
     }
     return canteenInstance!.objednatZBurzy(b);
   }
