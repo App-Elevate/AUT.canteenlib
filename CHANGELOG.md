@@ -1,6 +1,8 @@
 ## 3.1.0
 
-- Přidána podpora pro `
+- Přidána podpora pro `obedy.ss-stavebnikolin.cz`
+- Přidána methoda `jidelnicekMesic` pro získání jídelníčku pro měsíc
+- Přidány lepší filtery pro kategorizaci jídel
 
 ## 3.0.6
 
