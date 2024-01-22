@@ -1,3 +1,8 @@
+## 4.0.0
+
+- BREAKING: Přechod z `Future.error` na `enum` v `canteen_lib_exceptions.dart`
+- BREAKING: `objednat` a `doBurzy` vrací `Jidelnicek` místo `Jidlo`
+
 ## 3.1.0
 
 - Přidána podpora pro `obedy.ss-stavebnikolin.cz`

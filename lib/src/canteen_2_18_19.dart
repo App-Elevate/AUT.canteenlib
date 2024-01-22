@@ -483,7 +483,7 @@ class Canteen2v18v19 extends Canteen {
   /// Výstup:
   /// - [bool], `true`, pokud bylo jídlo úspěšně objednáno z burzy, jinak `Exception`
   @override
-  Future<bool> objednatZBurzy(Burza b) async {
+  Future<Jidelnicek> objednatZBurzy(Burza b) async {
     if (!prihlasen) return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     try {
       await _getRequest("/faces/secured/${b.url!}");
@@ -491,6 +491,6 @@ class Canteen2v18v19 extends Canteen {
       if (isEnumItem(e, CanteenLibExceptions.values)) return Future.error(e);
       return Future.error(CanteenLibExceptions.chybaObjednani);
     }
-    return true;
+    return jidelnicekDen(den: b.den);
   }
 }

@@ -469,7 +469,7 @@ class Canteen {
   ///
   /// Výstup:
   /// - [bool], `true`, pokud bylo jídlo úspěšně objednáno z burzy, jinak `Exception`
-  Future<bool> objednatZBurzy(Burza b) async {
+  Future<Jidelnicek> objednatZBurzy(Burza b) async {
     if (canteenInstance == null) {
       return Future.error(CanteenLibExceptions.jePotrebaSePrihlasit);
     }
