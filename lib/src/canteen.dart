@@ -283,7 +283,11 @@ class Canteen {
         }
     }
     if (loginData != null && !canteenInstance!.prihlasen) {
-      await canteenInstance!.login(loginData.username, loginData.password);
+      try {
+        await canteenInstance!.login(loginData.username, loginData.password);
+      } catch (e) {
+        return Future.error(e);
+      }
     }
     missingFeatures = canteenInstance!.missingFeatures;
     return prihlasen;
