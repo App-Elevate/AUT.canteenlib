@@ -1,7 +1,7 @@
 ## 4.0.0
 
-- BREAKING: Přechod z `Future.error` na `enum` v `canteen_lib_exceptions.dart`
-- BREAKING: `objednat` a `doBurzy` vrací `Jidelnicek` místo `Jidlo`
+- BREAKING: Přechod z `Future.error("String")` na `Future.error(enum)` v `canteen_lib_exceptions.dart`
+- BREAKING: `objednat`, `doBurzy` a `objednatZBurzy` vrací `Jidelnicek` místo `Jidlo`
 
 ## 3.1.0
 
