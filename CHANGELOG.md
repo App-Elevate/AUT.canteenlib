@@ -1,3 +1,7 @@
+## 4.0.1
+
+- Error handling for login
+
 ## 4.0.0
 
 - BREAKING: Přechod z `Future.error("String")` na `Future.error(enum)` v `canteen_lib_exceptions.dart`
