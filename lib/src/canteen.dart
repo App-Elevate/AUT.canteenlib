@@ -226,67 +226,44 @@ class Canteen {
     }
   }
 
+  Function(String) _getClosestCanteenVersion(String version) {
+    if (canteenVersions[version] != null) {
+      return canteenVersions[version]!;
+    }
+    List<int> currentVersion = version.split('.').map((e) => int.parse(e)).toList();
+    List<String> versions = canteenVersions.keys.toList();
+    for (int i = 2; i >= 0; i--) {
+      versions.sort(((a, b) {
+        List<int> aList = a.split('.').map((e) => int.parse(e)).toList();
+        List<int> bList = b.split('.').map((e) => int.parse(e)).toList();
+        return (currentVersion[i] - aList[i]).abs() - (currentVersion[i] - bList[i]).abs();
+      }));
+    }
+    return canteenVersions[versions.first]!;
+  }
+
   /// Získá verzi třídy pro verzi icanteenu
   Future<bool> _spravovatelVerzi({LoginData? loginData}) async {
-    switch (verze) {
-      case '2.18.03':
-        canteenInstance = Canteen2v18v03(url);
-        break;
-      case '2.18.19':
-        canteenInstance = Canteen2v18v19(url);
-        break;
-      case '2.19.13':
-        canteenInstance = Canteen2v19v13(url);
-        break;
-      case '2.10.27':
-        canteenInstance = Canteen2v10v27(url);
-        break;
-      default:
-        if (loginData == null) {
-          //pokud není loginData, tak se nemůže získat verze. Tudíž prostě zkusíme jednu verzi a je možné, že nebude fungovat...
-          canteenInstance = Canteen2v18v19(url);
-          break;
-        }
-        //vyzkoušet všechny verze, dokud se nepodaří přihlášení
-        try {
-          canteenInstance = Canteen2v18v03(url);
-          await canteenInstance!.login(loginData.username, loginData.password);
-          if (!canteenInstance!.prihlasen) {
-            throw 'Nepodařilo se přihlásit do iCanteenu';
-          }
-        } catch (e) {
-          try {
-            canteenInstance = Canteen2v18v19(url);
-            await canteenInstance!.login(loginData.username, loginData.password);
-            if (!canteenInstance!.prihlasen) {
-              throw 'Nepodařilo se přihlásit do iCanteenu';
-            }
-          } catch (e) {
-            try {
-              canteenInstance = Canteen2v19v13(url);
-              await canteenInstance!.login(loginData.username, loginData.password);
-              if (!canteenInstance!.prihlasen) {
-                throw 'Nepodařilo se přihlásit do iCanteenu';
-              }
-            } catch (e) {
-              try {
-                canteenInstance = Canteen2v10v27(url);
-                await canteenInstance!.login(loginData.username, loginData.password);
-                if (!canteenInstance!.prihlasen) {
-                  throw 'Nepodařilo se přihlásit do iCanteenu';
-                }
-              } catch (e) {
-                return Future.error(CanteenLibExceptions.nepodporovanaVerze);
-              }
-            }
-          }
-        }
-    }
-    if (loginData != null && !canteenInstance!.prihlasen) {
+    canteenInstance = _getClosestCanteenVersion(verze!)(url);
+    if (loginData != null) {
       try {
         await canteenInstance!.login(loginData.username, loginData.password);
       } catch (e) {
-        return Future.error(e);
+        Object? error;
+        for (final canteenVersion in canteenVersions.values) {
+          canteenInstance = canteenVersion(url);
+          try {
+            await canteenInstance!.login(loginData.username, loginData.password);
+            error = null;
+            break;
+          } catch (e) {
+            error = e;
+            continue;
+          }
+        }
+        if (error != null) {
+          return Future.error(error);
+        }
       }
     }
     missingFeatures = canteenInstance!.missingFeatures;
