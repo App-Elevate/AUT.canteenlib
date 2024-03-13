@@ -1,3 +1,8 @@
+## 4.0.2
+
+- Vylepšen systém pro získávání verzí
+- Přidána podpora pro `jidelna.cza-hu.cz`
+
 ## 4.0.1
 
 - Error handling for login

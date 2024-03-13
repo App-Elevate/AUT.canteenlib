@@ -162,3 +162,41 @@
   - vložení jídla na burzu➖
   - zrušit vložení jídla na burzu➖
 - Výdejny (jiné lokace) ✅
+
+# Česká zemědělská akademie v Humpolci
+
+- Login ✅
+- Získej uživatele ✅
+  - kredit ✅
+  - jméno ✅
+  - Příjmení ✅
+  - Kategorie ✅
+  - Účet pro platby ✅
+  - Variabilní symbol ✅
+  - specifický symbol ➖
+  - Uživatelské jméno ✅
+- Jídelníček pro den ✅
+  - správný počet jídel ✅
+  - jídlo ✅
+    - název ✅
+    - cena ✅
+    - varianta ✅
+    - objednáno ✅
+    - lze objednat ✅
+    - na burze ➖
+    - alergeny ➖
+      - kódy ➖ - není dostupné na této verzi icanteen
+      - podrobnosti ➖
+      - název ➖
+    - rozdělení na kategorie ✅
+- Jídelníček pro měsíc ✅
+- Objednávání
+  - funguje objednávání ✅
+  - funguje zrušení ✅
+- Burza ➖
+  - získání burzy ➖
+  - Objednávání z burzy ➖
+  - vložení jídla na burzu ➖
+  - zrušit vložení jídla na burzu ➖
+  - počet ➖
+- Výdejny (jiné lokace) ➖
