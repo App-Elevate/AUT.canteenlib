@@ -10,6 +10,7 @@ Jidelnicek? jidelnicek;
 Jidelnicek? druhaVydejnaJidelnicek;
 Jidelnicek? jidelnicekMesic;
 Uzivatel? uzivatel;
+DateTime date = DateTime(2024, 3, 13);
 Future<void> ziskatUzivatele() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
@@ -19,7 +20,7 @@ Future<void> ziskatUzivatele() async {
 Future<void> ziskatJidelnicek() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
-  DateTime funkcniDatum = DateTime(2023, 11, 22);
+  DateTime funkcniDatum = date;
   canteenInstance!.vydejna = 1;
   jidelnicek ??= await canteenInstance!.jidelnicekDen(den: funkcniDatum);
 }
@@ -27,7 +28,7 @@ Future<void> ziskatJidelnicek() async {
 Future<void> ziskatDruhaVydejnaJidelnicek() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
-  DateTime funkcniDatum = DateTime(2023, 11, 22);
+  DateTime funkcniDatum = date;
   canteenInstance!.vydejna = 2;
   jidelnicek ??= await canteenInstance!.jidelnicekDen(den: funkcniDatum);
 }
