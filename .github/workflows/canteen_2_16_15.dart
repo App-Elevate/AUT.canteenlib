@@ -344,6 +344,7 @@ class Canteen2v16v15 extends Canteen {
     } catch (e) {
       return Future.error(e);
     }
+     (await uzivatel?)"jidelnicek.html").writeAsStringSync(res);
 
     var jidla = <Jidlo>[];
     var jidelnicek = RegExp(r'(?<=<div class="jidWrapLeft">).+?((fa-clock)|(fa-ban))', dotAll: true).allMatches(res).toList();
