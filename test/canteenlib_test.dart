@@ -6,47 +6,68 @@ import 'package:dotenv/dotenv.dart';
 
 DotEnv? envSecrets;
 Canteen? canteenInstance;
-Jidelnicek? jidelnicek;
-Jidelnicek? druhaVydejnaJidelnicek;
-Jidelnicek? jidelnicekMesic;
-Uzivatel? uzivatel;
-DateTime date = DateTime(2024, 3, 13);
-Future<void> ziskatUzivatele() async {
-  envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
-  canteenInstance ??= Canteen(envSecrets!["URL"]!);
-  uzivatel ??= await canteenInstance!.ziskejUzivatele();
+Future<bool>? prihlaseno;
+Future<Jidelnicek>? jidelnicek;
+Future<Jidelnicek>? druhaVydejnaJidelnicek;
+Future<List<Jidelnicek>>? jidelnicekMesic;
+Future<Uzivatel>? uzivatel;
+DateTime date = DateTime(2024, 3, 26);
+Future<Uzivatel> ziskatUzivatele() async {
+  uzivatel ??= _ziskatUzivatele();
+  return uzivatel!;
 }
 
-Future<void> ziskatJidelnicek() async {
+Future<Uzivatel> _ziskatUzivatele() async {
+  envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
+  canteenInstance ??= Canteen(envSecrets!["URL"]!);
+  return canteenInstance!.ziskejUzivatele();
+}
+
+Future<Jidelnicek> ziskatJidelnicek() async {
+  jidelnicek ??= _ziskatJidelnicek();
+  return jidelnicek!;
+}
+
+Future<Jidelnicek> _ziskatJidelnicek() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
   DateTime funkcniDatum = date;
   canteenInstance!.vydejna = 1;
-  jidelnicek ??= await canteenInstance!.jidelnicekDen(den: funkcniDatum);
+  return await canteenInstance!.jidelnicekDen(den: funkcniDatum);
 }
 
-Future<void> ziskatDruhaVydejnaJidelnicek() async {
+Future<Jidelnicek> ziskatDruhaVydejnaJidelnicek() async {
+  druhaVydejnaJidelnicek ??= _ziskatDruhaVydejnaJidelnicek();
+  return druhaVydejnaJidelnicek!;
+}
+
+Future<Jidelnicek> _ziskatDruhaVydejnaJidelnicek() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
   DateTime funkcniDatum = date;
   canteenInstance!.vydejna = 2;
-  jidelnicek ??= await canteenInstance!.jidelnicekDen(den: funkcniDatum);
+  return await canteenInstance!.jidelnicekDen(den: funkcniDatum);
 }
 
-Future<void> ziskatJidelnicekMesic() async {
+Future<List<Jidelnicek>> ziskatJidelnicekMesic() async {
+  jidelnicekMesic ??= _ziskatJidelnicekMesic();
+  return jidelnicekMesic!;
+}
+
+Future<List<Jidelnicek>> _ziskatJidelnicekMesic() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
   canteenInstance!.vydejna = 1;
   List<Jidelnicek> jidelnickyProMesic = await canteenInstance!.jidelnicekMesic();
-  for (Jidelnicek jidelnicek in jidelnickyProMesic) {
-    if (jidelnicek.jidla.isNotEmpty) {
-      jidelnicekMesic = jidelnicek;
-      break;
-    }
-  }
+  return jidelnickyProMesic;
 }
 
 Future<bool> prihlasitSe() async {
+  prihlaseno ??= _prihlasitSe();
+  return prihlaseno!;
+}
+
+Future<bool> _prihlasitSe() async {
   envSecrets ??= DotEnv(includePlatformEnvironment: true)..load();
   canteenInstance ??= Canteen(envSecrets!["URL"]!);
   if (canteenInstance!.prihlasen) return true;
@@ -65,42 +86,42 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.viceVydejen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatJidelnicek();
-        expect(jidelnicek!.vydejny.length > 1, true);
+        expect((await jidelnicek!).vydejny.length > 1, true);
       });
       test('Jídelníček není prázdný', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatJidelnicek();
-        expect(jidelnicek!.jidla.isNotEmpty, true);
+        expect((await jidelnicek!).jidla.isNotEmpty, true);
       });
 
       test('Jídelníček má aspoň dva obědy', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatJidelnicek();
-        expect(jidelnicek!.jidla.length >= 2, true);
+        expect((await jidelnicek!).jidla.length >= 2, true);
       });
 
       test('Jídelníček má název', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatJidelnicek();
-        print(jidelnicek!.jidla[0].nazev);
-        expect(jidelnicek!.jidla[0].nazev.isNotEmpty, true);
+        print((await jidelnicek!).jidla[0].nazev);
+        expect((await jidelnicek!).jidla[0].nazev.isNotEmpty, true);
       });
 
       test('Jídelníček má cenu', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatJidelnicek();
-        expect(jidelnicek!.jidla[0].cena! > 10, true);
+        expect((await jidelnicek!).jidla[0].cena! > 10, true);
       });
 
       test('Jídelníček má variantu', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatJidelnicek();
-        expect(jidelnicek!.jidla[0].varianta.isNotEmpty, true);
+        expect((await jidelnicek!).jidla[0].varianta.isNotEmpty, true);
       });
 
       test('Jídelníček je kategorizovaný', () async {
@@ -108,21 +129,21 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatJidelnicek();
         print('--------------------Jídelníček--------------------');
-        print('Jídlo: ${jidelnicek!.jidla[0].nazev}');
-        print('Hlavní jídlo: ${jidelnicek!.jidla[0].kategorizovano!.hlavniJidlo}');
-        print('pití: ${jidelnicek!.jidla[0].kategorizovano!.piti}');
-        print('polévka: ${jidelnicek!.jidla[0].kategorizovano!.polevka}');
-        print('Salátový bar: ${jidelnicek!.jidla[0].kategorizovano!.salatovyBar}');
-        print('ostatní: ${jidelnicek!.jidla[0].kategorizovano!.ostatni}');
+        print('Jídlo: ${(await jidelnicek!).jidla[0].nazev}');
+        print('Hlavní jídlo: ${(await jidelnicek!).jidla[0].kategorizovano!.hlavniJidlo}');
+        print('pití: ${(await jidelnicek!).jidla[0].kategorizovano!.piti}');
+        print('polévka: ${(await jidelnicek!).jidla[0].kategorizovano!.polevka}');
+        print('Salátový bar: ${(await jidelnicek!).jidla[0].kategorizovano!.salatovyBar}');
+        print('ostatní: ${(await jidelnicek!).jidla[0].kategorizovano!.ostatni}');
         print('--------------------------------------------------');
-        expect(jidelnicek!.jidla[0].kategorizovano!.hlavniJidlo!.isNotEmpty, true);
+        expect((await jidelnicek!).jidla[0].kategorizovano!.hlavniJidlo!.isNotEmpty, true);
       });
       test('Jídelníček má alergeny', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.alergeny)) return;
         await ziskatJidelnicek();
-        expect(jidelnicek!.jidla[0].alergeny.isNotEmpty, true);
+        expect((await jidelnicek!).jidla[0].alergeny.isNotEmpty, true);
       });
     });
     group('Jídelníček, druhá výdejna:', () {
@@ -131,14 +152,14 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.viceVydejen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatDruhaVydejnaJidelnicek();
-        expect(jidelnicek!.vydejny.length > 1, true);
+        expect((await jidelnicek!).vydejny.length > 1, true);
       });
       test('Jídelníček není prázdný', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.viceVydejen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatDruhaVydejnaJidelnicek();
-        expect(jidelnicek!.jidla.isNotEmpty, true);
+        expect((await jidelnicek!).jidla.isNotEmpty, true);
       });
 
       test('Jídelníček má aspoň dva obědy', () async {
@@ -146,7 +167,7 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.viceVydejen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatDruhaVydejnaJidelnicek();
-        expect(jidelnicek!.jidla.length >= 2, true);
+        expect((await jidelnicek!).jidla.length >= 2, true);
       });
 
       test('Jídelníček má název', () async {
@@ -154,8 +175,8 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.viceVydejen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatDruhaVydejnaJidelnicek();
-        print(jidelnicek!.jidla[0].nazev);
-        expect(jidelnicek!.jidla[0].nazev.isNotEmpty, true);
+        print((await jidelnicek!).jidla[0].nazev);
+        expect((await jidelnicek!).jidla[0].nazev.isNotEmpty, true);
       });
 
       test('Jídelníček má cenu', () async {
@@ -163,7 +184,7 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.viceVydejen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatDruhaVydejnaJidelnicek();
-        expect(jidelnicek!.jidla[0].cena! > 10, true);
+        expect((await jidelnicek!).jidla[0].cena! > 10, true);
       });
 
       test('Jídelníček má variantu', () async {
@@ -171,7 +192,7 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.viceVydejen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatDruhaVydejnaJidelnicek();
-        expect(jidelnicek!.jidla[0].varianta.isNotEmpty, true);
+        expect((await jidelnicek!).jidla[0].varianta.isNotEmpty, true);
       });
 
       test('Jídelníček je kategorizovaný', () async {
@@ -180,14 +201,14 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         await ziskatDruhaVydejnaJidelnicek();
         print('--------------------Jídelníček--------------------');
-        print('Jídlo: ${jidelnicek!.jidla[0].nazev}');
-        print('Hlavní jídlo: ${jidelnicek!.jidla[0].kategorizovano!.hlavniJidlo}');
-        print('pití: ${jidelnicek!.jidla[0].kategorizovano!.piti}');
-        print('polévka: ${jidelnicek!.jidla[0].kategorizovano!.polevka}');
-        print('Salátový bar: ${jidelnicek!.jidla[0].kategorizovano!.salatovyBar}');
-        print('ostatní: ${jidelnicek!.jidla[0].kategorizovano!.ostatni}');
+        print('Jídlo: ${(await jidelnicek!).jidla[0].nazev}');
+        print('Hlavní jídlo: ${(await jidelnicek!).jidla[0].kategorizovano!.hlavniJidlo}');
+        print('pití: ${(await jidelnicek!).jidla[0].kategorizovano!.piti}');
+        print('polévka: ${(await jidelnicek!).jidla[0].kategorizovano!.polevka}');
+        print('Salátový bar: ${(await jidelnicek!).jidla[0].kategorizovano!.salatovyBar}');
+        print('ostatní: ${(await jidelnicek!).jidla[0].kategorizovano!.ostatni}');
         print('--------------------------------------------------');
-        expect(jidelnicek!.jidla[0].kategorizovano!.hlavniJidlo!.isNotEmpty, true);
+        expect((await jidelnicek!).jidla[0].kategorizovano!.hlavniJidlo!.isNotEmpty, true);
       });
       test('Jídelníček má alergeny', () async {
         await prihlasitSe();
@@ -195,7 +216,7 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.alergeny)) return;
         await ziskatDruhaVydejnaJidelnicek();
-        expect(jidelnicek!.jidla[0].alergeny.isNotEmpty, true);
+        expect((await jidelnicek!).jidla[0].alergeny.isNotEmpty, true);
       });
     });
 
@@ -205,42 +226,42 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.viceVydejen)) return;
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         await ziskatJidelnicekMesic();
-        expect(jidelnicekMesic!.vydejny.length > 1, true);
+        expect((await jidelnicekMesic!)[0].vydejny.length > 1, true);
       });
       test('Jídelníček není prázdný', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         await ziskatJidelnicekMesic();
-        expect(jidelnicekMesic!.jidla.isNotEmpty, true);
+        expect((await jidelnicekMesic!)[0].jidla.isNotEmpty, true);
       });
 
       test('Jídelníček má aspoň jeden oběd', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         await ziskatJidelnicekMesic();
-        expect(jidelnicekMesic!.jidla.isNotEmpty, true);
+        expect((await jidelnicekMesic!)[0].jidla.isNotEmpty, true);
       });
 
       test('Jídelníček má název', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         await ziskatJidelnicekMesic();
-        print(jidelnicekMesic!.jidla[0].nazev);
-        expect(jidelnicekMesic!.jidla[0].nazev.isNotEmpty, true);
+        print((await jidelnicekMesic!)[0].jidla[0].nazev);
+        expect((await jidelnicekMesic!)[0].jidla[0].nazev.isNotEmpty, true);
       });
 
       test('Jídelníček má cenu', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         await ziskatJidelnicekMesic();
-        expect(jidelnicekMesic!.jidla[0].cena! > 10, true);
+        expect((await jidelnicekMesic!)[0].jidla[0].cena! > 10, true);
       });
 
       test('Jídelníček má variantu', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         await ziskatJidelnicekMesic();
-        expect(jidelnicekMesic!.jidla[0].varianta.isNotEmpty, true);
+        expect((await jidelnicekMesic!)[0].jidla[0].varianta.isNotEmpty, true);
       });
 
       test('Jídelníček je kategorizovaný', () async {
@@ -248,21 +269,31 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         await ziskatJidelnicekMesic();
         print('--------------------Jídelníček--------------------');
-        print('Jídlo: ${jidelnicekMesic!.jidla[0].nazev}');
-        print('Hlavní jídlo: ${jidelnicekMesic!.jidla[0].kategorizovano!.hlavniJidlo}');
-        print('pití: ${jidelnicekMesic!.jidla[0].kategorizovano!.piti}');
-        print('polévka: ${jidelnicekMesic!.jidla[0].kategorizovano!.polevka}');
-        print('Salátový bar: ${jidelnicekMesic!.jidla[0].kategorizovano!.salatovyBar}');
-        print('ostatní: ${jidelnicekMesic!.jidla[0].kategorizovano!.ostatni}');
+        print('Jídlo: ${(await jidelnicekMesic!)[0].jidla[0].nazev}');
+        print('Hlavní jídlo: ${(await jidelnicekMesic!)[0].jidla[0].kategorizovano!.hlavniJidlo}');
+        print('pití: ${(await jidelnicekMesic!)[0].jidla[0].kategorizovano!.piti}');
+        print('polévka: ${(await jidelnicekMesic!)[0].jidla[0].kategorizovano!.polevka}');
+        print('Salátový bar: ${(await jidelnicekMesic!)[0].jidla[0].kategorizovano!.salatovyBar}');
+        print('ostatní: ${(await jidelnicekMesic!)[0].jidla[0].kategorizovano!.ostatni}');
         print('--------------------------------------------------');
-        expect(jidelnicekMesic!.jidla[0].kategorizovano!.hlavniJidlo!.isNotEmpty, true);
+        expect((await jidelnicekMesic!)[0].jidla[0].kategorizovano!.hlavniJidlo!.isNotEmpty, true);
       });
       test('Jídelníček má alergeny', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.jidelnicekMesic)) return;
         if (canteenInstance!.missingFeatures.contains(Features.alergeny)) return;
         await ziskatJidelnicekMesic();
-        expect(jidelnicekMesic!.jidla[0].alergeny.isNotEmpty, true);
+        bool alergeny = false;
+        for (int i = 0; i < (await jidelnicekMesic!).length; i++) {
+          for (int k = 0; k < (await jidelnicekMesic!)[i].jidla.length; k++) {
+            if ((await jidelnicekMesic!)[i].jidla[k].alergeny.isNotEmpty) {
+              alergeny = true;
+              break;
+            }
+          }
+          if (alergeny) break;
+        }
+        expect(alergeny, true);
       });
     });
 
@@ -271,28 +302,28 @@ void main() {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.ziskatUzivatele)) return;
         await ziskatUzivatele();
-        expect(uzivatel!.kredit > -10000 && uzivatel!.kredit < 10000, true);
+        expect((await uzivatel!).kredit > -10000 && (await uzivatel!).kredit < 10000, true);
       });
 
       test('Uživatel má jméno', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.ziskatUzivatele)) return;
         await ziskatUzivatele();
-        expect(uzivatel!.jmeno!.isNotEmpty, true);
+        expect((await uzivatel!).jmeno!.isNotEmpty, true);
       });
 
       test('Uživatel má příjmení', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.ziskatUzivatele)) return;
         await ziskatUzivatele();
-        expect(uzivatel!.prijmeni!.isNotEmpty, true);
+        expect((await uzivatel!).prijmeni!.isNotEmpty, true);
       });
 
       test('Uživatel má účet pro platby', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.ziskatUzivatele)) return;
         await ziskatUzivatele();
-        expect(uzivatel!.ucetProPlatby!.isNotEmpty, true);
+        expect((await uzivatel!).ucetProPlatby!.isNotEmpty, true);
       });
 
       test('Uživatel má variablilní nebo specifický symbol', () async {
@@ -300,13 +331,13 @@ void main() {
         if (canteenInstance!.missingFeatures.contains(Features.variabilniSymbol)) return;
         if (canteenInstance!.missingFeatures.contains(Features.ziskatUzivatele)) return;
         await ziskatUzivatele();
-        expect((uzivatel!.varSymbol ?? "").isNotEmpty || (uzivatel!.specSymbol ?? "").isNotEmpty, true);
+        expect(((await uzivatel!).varSymbol ?? "").isNotEmpty || ((await uzivatel!).specSymbol ?? "").isNotEmpty, true);
       });
       test('Uživatel má uživatelské jméno', () async {
         await prihlasitSe();
         if (canteenInstance!.missingFeatures.contains(Features.ziskatUzivatele)) return;
         await ziskatUzivatele();
-        expect((uzivatel?.uzivatelskeJmeno ?? "").isNotEmpty, true);
+        expect(((await uzivatel!).uzivatelskeJmeno)!.isNotEmpty, true);
       });
     });
   });
