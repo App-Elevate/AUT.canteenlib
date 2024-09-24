@@ -12,6 +12,24 @@ class JidloKategorizovano {
     this.piti,
     this.ostatni,
   });
+
+  /// Převést na JSON
+  Map<String, dynamic> toJson() => {
+        'polevka': polevka,
+        'hlavniJidlo': hlavniJidlo,
+        'salatovyBar': salatovyBar,
+        'piti': piti,
+        'ostatni': ostatni,
+      };
+
+  /// Převést z JSON
+  factory JidloKategorizovano.fromJson(Map<String, dynamic> json) => JidloKategorizovano(
+        polevka: json['polevka'],
+        hlavniJidlo: json['hlavniJidlo'],
+        salatovyBar: json['salatovyBar'],
+        piti: json['piti'],
+        ostatni: json['ostatni'],
+      );
 }
 
 /// Reprezentuje jedno jídlo z jídelníčku
@@ -64,6 +82,36 @@ class Jidlo {
     this.burzaUrl,
     required this.naBurze,
   });
+
+  /// Převést na JSON
+  Map<String, dynamic> toJson() => {
+        'nazev': nazev,
+        'kategorizovano': kategorizovano?.toJson(), // Assuming JidloKategorizovano has toJson()
+        'objednano': objednano,
+        'varianta': varianta,
+        'cena': cena,
+        'lzeObjednat': lzeObjednat,
+        'naBurze': naBurze,
+        'den': den.toIso8601String(),
+        'alergeny': alergeny.map((a) => a.toJson()).toList(), // Assuming Alergen has toJson()
+        'orderUrl': orderUrl,
+        'burzaUrl': burzaUrl,
+      };
+
+  /// Převést z JSON
+  factory Jidlo.fromJson(Map<String, dynamic> json) => Jidlo(
+        nazev: json['nazev'],
+        kategorizovano: json['kategorizovano'] != null ? JidloKategorizovano.fromJson(json['kategorizovano']) : null,
+        objednano: json['objednano'],
+        varianta: json['varianta'],
+        cena: json['cena'],
+        lzeObjednat: json['lzeObjednat'],
+        naBurze: json['naBurze'],
+        den: DateTime.parse(json['den']),
+        alergeny: (json['alergeny'] as List).map((a) => Alergen.fromJson(a)).toList(), // Assuming Alergen has fromJson()
+        orderUrl: json['orderUrl'],
+        burzaUrl: json['burzaUrl'],
+      );
 }
 
 /// Popisuje alergen v jídelníčku
@@ -77,6 +125,20 @@ class Alergen {
     this.kod,
     this.popis,
   });
+
+  /// Převést na JSON
+  Map<String, dynamic> toJson() => {
+        'kod': kod,
+        'nazev': nazev,
+        'popis': popis,
+      };
+
+  /// Převést z JSON
+  factory Alergen.fromJson(Map<String, dynamic> json) => Alergen(
+        kod: json['kod'],
+        nazev: json['nazev'],
+        popis: json['popis'],
+      );
 }
 
 enum Features {
@@ -150,6 +212,20 @@ class Jidelnicek {
     this.jidla, {
     this.vydejny = const {},
   });
+
+  /// Převést na JSON
+  Map<String, dynamic> toJson() => {
+        'den': den.toIso8601String(),
+        'jidla': jidla.map((j) => j.toJson()).toList(),
+        'vydejny': vydejny,
+      };
+
+  /// Převést z JSON
+  factory Jidelnicek.fromJson(Map<String, dynamic> json) => Jidelnicek(
+        DateTime.parse(json['den']),
+        (json['jidla'] as List).map((j) => Jidlo.fromJson(j)).toList(),
+        vydejny: Map<int, String>.from(json['vydejny']),
+      );
 }
 
 /// Reprezentuje informace o přihlášeném uživateli
