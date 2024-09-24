@@ -1,10 +1,17 @@
 class JidloKategorizovano {
-  JidloKategorizovano({this.polevka, this.hlavniJidlo, this.salatovyBar, this.piti, this.ostatni});
   String? polevka;
   String? hlavniJidlo;
   String? salatovyBar;
   String? piti;
   String? ostatni;
+
+  JidloKategorizovano({
+    this.polevka,
+    this.hlavniJidlo,
+    this.salatovyBar,
+    this.piti,
+    this.ostatni,
+  });
 }
 
 /// Reprezentuje jedno jídlo z jídelníčku
@@ -43,18 +50,20 @@ class Jidlo {
 
   /// URL pro vložení jídla na burzu
   final String? burzaUrl;
-  Jidlo(
-      {required this.nazev,
-      this.kategorizovano,
-      required this.objednano,
-      required this.varianta,
-      required this.den,
-      this.alergeny = const [],
-      this.cena,
-      required this.lzeObjednat,
-      this.orderUrl,
-      this.burzaUrl,
-      required this.naBurze});
+
+  Jidlo({
+    required this.nazev,
+    this.kategorizovano,
+    required this.objednano,
+    required this.varianta,
+    required this.den,
+    this.alergeny = const [],
+    this.cena,
+    required this.lzeObjednat,
+    this.orderUrl,
+    this.burzaUrl,
+    required this.naBurze,
+  });
 }
 
 /// Popisuje alergen v jídelníčku
@@ -63,7 +72,11 @@ class Alergen {
   final String nazev;
   final String? popis;
 
-  const Alergen({required this.nazev, this.kod, this.popis});
+  const Alergen({
+    required this.nazev,
+    this.kod,
+    this.popis,
+  });
 }
 
 enum Features {
@@ -112,7 +125,13 @@ class Burza {
   /// Počet kusů tohoto jídla dostupného na burze
   int pocet;
 
-  Burza({required this.den, required this.url, required this.nazev, required this.pocet, this.varianta});
+  Burza({
+    required this.den,
+    required this.url,
+    required this.nazev,
+    required this.pocet,
+    this.varianta,
+  });
 }
 
 /// Reprezentuje jídelníček pro jeden den
@@ -125,7 +144,12 @@ class Jidelnicek {
 
   // Seznam výdejen (je prázdný, pokud je pouze jedna)
   Map<int, String> vydejny;
-  Jidelnicek(this.den, this.jidla, {this.vydejny = const {}});
+
+  Jidelnicek(
+    this.den,
+    this.jidla, {
+    this.vydejny = const {},
+  });
 }
 
 /// Reprezentuje informace o přihlášeném uživateli
@@ -169,5 +193,9 @@ class Uzivatel {
 class LoginData {
   final String username;
   final String password;
-  LoginData(this.username, this.password);
+
+  LoginData(
+    this.username,
+    this.password,
+  );
 }
