@@ -69,5 +69,5 @@ jobs:
           echo "USER= '${{ secrets.USER4 }}'" >> .env
           echo "PASS= '${{ secrets.PASS4 }}'" >> .env
 
-      - name: Test pro obedy.ss-stavebnikolin.cz
+      - name: Test pro jidelna.cza-hu.cz
         run: dart test
