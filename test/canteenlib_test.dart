@@ -145,6 +145,15 @@ void main() {
         await ziskatJidelnicek();
         expect((await jidelnicek!).jidla[0].alergeny.isNotEmpty, true);
       });
+
+      test('Jídelníček toJson() a fromJson()', () async {
+        await prihlasitSe();
+        if (canteenInstance!.missingFeatures.contains(Features.jidelnicekDen)) return;
+        await ziskatJidelnicek();
+        Jidelnicek? localJidelnicek = await jidelnicek;
+        if (localJidelnicek == null) return;
+        expect(localJidelnicek == Jidelnicek.fromJson(localJidelnicek.toJson()), true);
+      });
     });
     group('Jídelníček, druhá výdejna:', () {
       test('Jídelníček má více výdejen', () async {

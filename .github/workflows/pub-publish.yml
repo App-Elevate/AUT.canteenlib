@@ -78,14 +78,14 @@ jobs:
         run: dart test
 
       # Testing pro jidelna.cza-hu.cz
-      - name: Credentials pro jidelna.cza-hu.cz
-        run: |
-          echo "URL= 'jidelna.cza-hu.cz'" > .env
-          echo "USER= '${{ secrets.USER4 }}'" >> .env
-          echo "PASS= '${{ secrets.PASS4 }}'" >> .env
+      #- name: Credentials pro jidelna.cza-hu.cz
+      #  run: |
+      #    echo "URL= 'jidelna.cza-hu.cz'" > .env
+      #    echo "USER= '${{ secrets.USER4 }}'" >> .env
+      #    echo "PASS= '${{ secrets.PASS4 }}'" >> .env
 
-      - name: Test pro obedy.ss-stavebnikolin.cz
-        run: dart test
+      #- name: Test pro jidelna.cza-hu.cz
+      #  run: dart test
 
       - name: Removing credentials
         run: rm -rf .env

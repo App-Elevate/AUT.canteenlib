@@ -1,3 +1,7 @@
+## 4.1.0
+
+- Přidány toJson a fromJson metody
+
 ## 4.0.3
 
 - Hotfix: Opraven oversight kde se ukládaly testovací soubory.
@@ -74,7 +78,7 @@
 
 ## 1.1.2
 
-- Opravit negativní čísla v kreditu, účet pro platby by @tpkowastaken in https://github.com/hernikplays/canteenlib/pull/4
+- Opravit negativní čísla v kreditu, účet pro platby by @tpkowastaken in <https://github.com/hernikplays/canteenlib/pull/4>
 
 ## 1.1.1
 
