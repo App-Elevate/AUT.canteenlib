@@ -1,3 +1,7 @@
+## 4.0.4
+
+- Přidány toJson a fromJson metody
+
 ## 4.0.3
 
 - Hotfix: Opraven oversight kde se ukládaly testovací soubory.
