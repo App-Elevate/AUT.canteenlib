@@ -8,7 +8,7 @@
 
 ❓ - featura funguje částečně nebo nelze vyzkoušet
 
-# Feature set
+## Feature set
 
 (featury na otestování u každé verze)
 
@@ -49,7 +49,7 @@
   - počet
 - Výdejny (jiné lokace)
 
-# Spš a G Na Třebešíně - verze 2.18.03
+## Spš a G Na Třebešíně - verze 2.18.03
 
 - Login ✅
 - Získej uživatele ✅
@@ -87,7 +87,7 @@
   - počet ➖
 - Výdejny (jiné lokace) ➖
 
-# Základní škola Ostrava, Matiční 5
+## Základní škola Ostrava, Matiční 5
 
 - Login ✅
 - Získej uživatele ✅
@@ -125,7 +125,7 @@
   - počet ➖
 - Výdejny (jiné lokace) ➖
 
-# SOŠ stavební a SOU stavební Kolín
+## SOŠ stavební a SOU stavební Kolín
 
 - Login ✅
 - Získej uživatele ✅
@@ -163,7 +163,7 @@
   - zrušit vložení jídla na burzu➖
 - Výdejny (jiné lokace) ✅
 
-# Česká zemědělská akademie v Humpolci
+## Česká zemědělská akademie v Humpolci
 
 - Login ✅
 - Získej uživatele ✅
