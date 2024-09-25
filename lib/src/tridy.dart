@@ -30,6 +30,21 @@ class JidloKategorizovano {
         piti: json['piti'],
         ostatni: json['ostatni'],
       );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is JidloKategorizovano &&
+        other.polevka == polevka &&
+        other.hlavniJidlo == hlavniJidlo &&
+        other.salatovyBar == salatovyBar &&
+        other.piti == piti &&
+        other.ostatni == ostatni;
+  }
+
+  @override
+  int get hashCode => polevka.hashCode ^ hlavniJidlo.hashCode ^ salatovyBar.hashCode ^ piti.hashCode ^ ostatni.hashCode;
 }
 
 /// Reprezentuje jedno jídlo z jídelníčku
@@ -112,6 +127,51 @@ class Jidlo {
         orderUrl: json['orderUrl'],
         burzaUrl: json['burzaUrl'],
       );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Jidlo &&
+        other.nazev == nazev &&
+        other.kategorizovano == kategorizovano &&
+        other.objednano == objednano &&
+        other.varianta == varianta &&
+        other.cena == cena &&
+        other.lzeObjednat == lzeObjednat &&
+        other.naBurze == naBurze &&
+        other.den == den &&
+        _porovnatAlergenyList(other.alergeny, alergeny) &&
+        other.orderUrl == orderUrl &&
+        other.burzaUrl == burzaUrl;
+  }
+
+  bool _porovnatAlergenyList(List<Alergen> list1, List<Alergen> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode =>
+      nazev.hashCode ^
+      kategorizovano.hashCode ^
+      objednano.hashCode ^
+      varianta.hashCode ^
+      cena.hashCode ^
+      lzeObjednat.hashCode ^
+      naBurze.hashCode ^
+      den.hashCode ^
+      _generovatAlergenyListHashCode(alergeny) ^
+      orderUrl.hashCode ^
+      burzaUrl.hashCode;
+
+  // Generuje hashcode pro List<Alergen>
+  int _generovatAlergenyListHashCode(List<Alergen> list) {
+    return list.fold(0, (prev, element) => prev ^ element.hashCode);
+  }
 }
 
 /// Popisuje alergen v jídelníčku
@@ -121,8 +181,8 @@ class Alergen {
   final String? popis;
 
   const Alergen({
-    required this.nazev,
     this.kod,
+    required this.nazev,
     this.popis,
   });
 
@@ -139,6 +199,16 @@ class Alergen {
         nazev: json['nazev'],
         popis: json['popis'],
       );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Alergen && other.kod == kod && other.nazev == nazev && other.popis == popis;
+  }
+
+  @override
+  int get hashCode => kod.hashCode ^ nazev.hashCode ^ popis.hashCode;
 }
 
 enum Features {
@@ -194,6 +264,16 @@ class Burza {
     required this.pocet,
     this.varianta,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Burza && other.den == den && other.url == url && other.nazev == nazev && other.varianta == varianta && other.pocet == pocet;
+  }
+
+  @override
+  int get hashCode => den.hashCode ^ url.hashCode ^ nazev.hashCode ^ varianta.hashCode ^ pocet.hashCode;
 }
 
 /// Reprezentuje jídelníček pro jeden den
@@ -226,6 +306,40 @@ class Jidelnicek {
         (json['jidla'] as List).map((j) => Jidlo.fromJson(j)).toList(),
         vydejny: Map<int, String>.from(json['vydejny']),
       );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Jidelnicek && other.den == den && _porovnatJidlaList(other.jidla, jidla) && _porovnatVydejnyMap(other.vydejny, vydejny);
+  }
+
+  bool _porovnatJidlaList(List<Jidlo> list1, List<Jidlo> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
+  }
+
+  bool _porovnatVydejnyMap(Map<int, String> map1, Map<int, String> map2) {
+    if (map1.length != map2.length) return false;
+    for (var key in map1.keys) {
+      if (map1[key] != map2[key]) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => den.hashCode ^ _generovatListHashCode(jidla) ^ _generovatMapHashCode(vydejny);
+
+  int _generovatListHashCode(List<Jidlo> list) {
+    return list.fold(0, (prev, element) => prev ^ element.hashCode);
+  }
+
+  int _generovatMapHashCode(Map<int, String> map) {
+    return map.entries.fold(0, (prev, entry) => prev ^ entry.key.hashCode ^ entry.value.hashCode);
+  }
 }
 
 /// Reprezentuje informace o přihlášeném uživateli
@@ -264,6 +378,32 @@ class Uzivatel {
     this.kredit = 0.0,
     this.specSymbol,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Uzivatel &&
+        other.uzivatelskeJmeno == uzivatelskeJmeno &&
+        other.jmeno == jmeno &&
+        other.prijmeni == prijmeni &&
+        other.kategorie == kategorie &&
+        other.ucetProPlatby == ucetProPlatby &&
+        other.varSymbol == varSymbol &&
+        other.kredit == kredit &&
+        other.specSymbol == specSymbol;
+  }
+
+  @override
+  int get hashCode =>
+      uzivatelskeJmeno.hashCode ^
+      jmeno.hashCode ^
+      prijmeni.hashCode ^
+      kategorie.hashCode ^
+      ucetProPlatby.hashCode ^
+      varSymbol.hashCode ^
+      kredit.hashCode ^
+      specSymbol.hashCode;
 }
 
 class LoginData {
@@ -274,4 +414,14 @@ class LoginData {
     this.username,
     this.password,
   );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is LoginData && other.username == username && other.password == password;
+  }
+
+  @override
+  int get hashCode => username.hashCode ^ password.hashCode;
 }
