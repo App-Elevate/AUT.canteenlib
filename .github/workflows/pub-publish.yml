@@ -12,7 +12,7 @@ jobs:
     permissions:
       id-token: write # Required for authentication using OIDC
       contents: write # Required for writing to the release
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
       - uses: actions/checkout@v3
       - name: Extract release notes
